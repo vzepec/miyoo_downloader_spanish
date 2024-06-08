@@ -21,22 +21,22 @@ check_for_updates() {
     exit 1
   fi
   curl -s -k -H "Authorization: token $TOKEN" --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RAW_URL" || {
-    echo "Error al descargar el archivo. Verifica la conexión y el token."
+    echo "Error al descargar el archivo. Verifica la conexion y el token."
     rm -f "$TEMP_FILE"
     exit 1
   }
 
   if [ ! -s "$TEMP_FILE" ]; then
-    echo "El archivo descargado está vacío. Revisa la URL y el repositorio."
+    echo "El archivo descargado esta vacio. Revisa la URL y el repositorio."
     rm -f "$TEMP_FILE"
     exit 1
   fi
 
   # Comparar el archivo local con el archivo remoto
   if cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local está actualizado."
+    echo "El archivo local ya esta actualizado."
   else
-    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
+    echo "Hay una actualizacion disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo actualizado descargado y permisos aplicados."
@@ -48,23 +48,29 @@ check_for_updates() {
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
-    local script1="./download_nes_spa.sh"
-    local script2="./download_psx_spa.sh"
-    echo "Seleccione archivo a ejecutar: 1 for NES, 2 for PSX: "
-    read option
-    if [ "$option" = "1" ]; then
-        check_for_updates "$LOCAL_FILE_NES" "$GITHUB_RAW_URL_NES"
-        echo "Ejecutando $script1..."
-        chmod +x "$script1"
-        "$script1"
-    elif [ "$option" = "2" ]; then
-        check_for_updates "$LOCAL_FILE_PSX" "$GITHUB_RAW_URL_PSX"
-        echo "Ejecutando $script2..."
-        chmod +x "$script2"
-        "$script2"
-    else
-        echo "Opción inválida"
-    fi
+  local script1="./download_nes_spa.sh"
+  local script2="./download_psx_spa.sh"
+  clear
+  echo "Seleccione archivo a ejecutar:"
+  echo "------------------------------"
+  echo "1. NES"
+  echo "2. PSX"
+  echo ""
+  local option=""
+  while [ "$option" != "1" ] && [ "$option" != "2" ]; do
+    read -p "Ingrese una opcion valida (1 o 2): " option
+  done
+  if [ "$option" = "1" ]; then
+    check_for_updates "$LOCAL_FILE_NES" "$GITHUB_RAW_URL_NES"
+    echo "Ejecutando $script1..."
+    chmod +x "$script1"
+    "$script1"
+  elif [ "$option" = "2" ]; then
+    check_for_updates "$LOCAL_FILE_PSX" "$GITHUB_RAW_URL_PSX"
+    echo "Ejecutando $script2..."
+    chmod +x "$script2"
+    "$script2"
+  fi
 }
 
 # Llamar a la función para decidir qué archivo .sh ejecutar
