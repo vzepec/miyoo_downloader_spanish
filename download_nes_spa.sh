@@ -3,7 +3,6 @@
 # URL base
 BASE_URL="https://archive.org/download/nes-compilacion-de-traducciones-en-espanol_202404/"
 BASE_URL2="https://archive.org/download/compilacion-traducciones-en-castellano-nes/"
-#BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-psx/"
  
 
 # Descargar la lista de archivos para BASE_URL
@@ -25,7 +24,7 @@ sort -u file_list_nes_2.txt -o file_list_nes_2.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/FC"
-  # Validate if there are any files or directories without .nes extension
+  # Validar si hay archivos o directorios sin la extension .nes
   local invalid_files=$(find "../Roms/FC" ! -name "*.nes")
   if [ -n "$invalid_files" ]; then
     find "../Roms/FC" ! -name "*.nes" -type f -delete
@@ -47,8 +46,8 @@ show_page() {
   local i=0
   local line
   local total_files=$(wc -l < file_list_nes.txt)
-  echo "Page $((page + 1)):"
-  echo "Total files: $total_files"
+  echo "Pagina $((page + 1)):"
+  echo "Total juegos: $total_files"
   echo "------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
@@ -63,22 +62,22 @@ show_page() {
   done < file_list_nes.txt
   echo ""
   echo "------------------"
-  echo "n. Next page"
-  echo "p. Previous page"
-  echo "q. Quit"
-  echo "s. Search file by name"
+  echo "n. Pagina siguiente"
+  echo "p. Pagina anterior"
+  echo "q. Salir"
+  echo "s. Buscar por nombre"
   echo ""
 }
 
 search_file() {
-  echo -n "Enter the file name to search: "
+  echo -n "Escribe el juego a buscar: "
   read -r search_name
   # Convertir la cadena de búsqueda en una expresión regular
   local search_regex=$(echo "$search_name" | sed 's/ /.* /g')
   grep -i -E "$search_regex" file_list_nes.txt > search_results.txt
   local total_results=$(wc -l < search_results.txt)
   if [ $total_results -eq 0 ]; then
-    echo "No results found for '$search_name'."
+    echo "No hay resultados para '$search_name'."
   else
     paginate_search_results 0
   fi
@@ -91,8 +90,8 @@ paginate_search_results() {
   local i=0
   local line
   local total_results=$(wc -l < search_results.txt)
-  echo "Search results - Page $((page + 1)):"
-  echo "Total results: $total_results"
+  echo "Resultados de la busqueda - Pagina $((page + 1)):"
+  echo "Total de resultados: $total_results"
   echo "------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
@@ -107,35 +106,35 @@ paginate_search_results() {
   done < search_results.txt
   echo ""
   echo "------------------"
-  echo "n. Next page"
-  echo "p. Previous page"
-  echo "m. Main menu"
+  echo "n. Pagina siguiente"
+  echo "p. Pagina anterior"
+  echo "m. Menu"
   echo ""
-  echo "Select a file to download (number) or navigate (n/p/m): "
+  echo "Seleccionar un juego a descargar (numero) o navegar (n/p/m): "
   read -r choice
   if echo "$choice" | grep -q '^[0-9]\+$'; then
     index=$((choice - 1))
     file_to_download=$(sed -n "$((index + 1))p" search_results.txt)  # Ajuste para obtener la línea correcta
-    echo "Downloading $file_to_download..."
+    echo "Descargando $file_to_download..."
     download_filtered_file "$file_to_download"
   elif [ "$choice" = "n" ]; then
     page=$((page + 1))
     if ! tail -n +$((page * 10 + 1)) search_results.txt | head -n 1 >/dev/null 2>&1; then
       page=$((page - 1))
-      echo "No more pages."
+      echo "No hay mas paginas."
     fi
     paginate_search_results "$page"
   elif [ "$choice" = "p" ]; then
     if [ "$page" -gt 0 ]; then
       page=$((page - 1))
     else
-      echo "Already at the first page."
+      echo "Ya estas en la primera pagina"
     fi
     paginate_search_results "$page"
   elif [ "$choice" = "m" ]; then
     return
   else
-    echo "Invalid choice."
+    echo "Opcion invalida."
     paginate_search_results "$page"
   fi
 }
@@ -153,7 +152,7 @@ download_filtered_file() {
   file_name=$(perform_substitution "$line")
   mv "../Roms/FC/$line" "../Roms/FC/$file_name"
   extract_zip "../Roms/FC/$file_name"
-  echo "Download complete: ../Roms/FC/$file_name"
+  echo "Descarga completa: ../Roms/FC/$file_name"
 }
 
 # Función para descargar el archivo seleccionado (corregida)
@@ -173,7 +172,7 @@ download_file() {
       file_name=$(perform_substitution "$line")
       mv "../Roms/FC/$line" "../Roms/FC/$file_name"
       extract_zip "../Roms/FC/$file_name"
-      echo "Download complete: ../Roms/FC/$file_name"
+      echo "Descarga completa: ../Roms/FC/$file_name"
       break
     fi
     i=$((i + 1))
@@ -184,30 +183,30 @@ download_file() {
 page=0
 while true; do
   show_page "$page"
-  echo -n "Select a file to download (number), navigate (n/p), or quit (q): "
+  echo -n "Seleciona un juego a descargar (numero), navegar (n/p), o salir (q): "
   read -r choice
   if [ "$choice" = "s" ]; then
     search_file
   elif echo "$choice" | grep -q '^[0-9]\+$'; then
     index=$((choice - 1))
-    echo "Downloading..."
+    echo "Descargando..."
     download_file "$index"
   elif [ "$choice" = "n" ]; then
     page=$((page + 1))
     if ! tail -n +$((page * 10 + 1)) file_list_nes.txt | head -n 1 >/dev/null 2>&1; then
       page=$((page - 1))
-      echo "No more pages."
+      echo "No hay mas paginas."
     fi
   elif [ "$choice" = "p" ]; then
     if [ "$page" -gt 0 ]; then
       page=$((page - 1))
     else
-      echo "Already at the first page."
+      echo "Ya estas en la primera pagina"
     fi
   elif [ "$choice" = "q" ]; then
     break
   else
-    echo "Invalid choice."
+    echo "Opcion invalida."
   fi
 done
 
