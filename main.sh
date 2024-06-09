@@ -77,7 +77,12 @@ check_for_updates() {
 # Función para decidir qué archivo .sh ejecutar
 script() {
   clear
-  echo "Seleccione archivo a ejecutar:"
+  echo ""
+  echo "___ _______________________________ ________ "
+  echo "|  \|___[__ |   |__||__/| __|__||  \|  ||__/ "
+  echo "|__/|______]|___|  ||  \|__]|  ||__/|__||  \ "
+  echo "                                             "
+  echo "Seleccione Plataforma:"
   echo "------------------------------"
   echo ""
   echo -e "\e[32m1. NES  (Nintendo Entertainment System)\e[0m"
