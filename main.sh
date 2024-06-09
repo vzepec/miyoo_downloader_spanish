@@ -99,7 +99,7 @@ script() {
   echo ""
   local option=""
   while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "u" ] && [ "$option" != "q" ]; do
-    read -p "Ingrese una opcion valida (1-6, u, q): " option
+    read -p "Opcion > " option
   done
   case "$option" in
     1)
