@@ -60,7 +60,7 @@ check_for_updates() {
 
   # Si el archivo local es igual a la ultima version de develop
   elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya está actualizado."
+    echo "El archivo local ya esta actualizado."
 
   # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
   else
