@@ -23,7 +23,6 @@ TOKEN="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"
 check_for_updates() {
   local file_to_update="$1"
   local GITHUB_RAW_URL="$2"
-  clear
   echo "Buscando actualizaciones para $file_to_update ..."
 
   # Crear un archivo temporal
@@ -75,13 +74,15 @@ check_for_updates() {
   [ -f "$TEMP_FILE" ] && rm -f "$TEMP_FILE"
 }
 
-# Se actualiza el archivo Main
-check_for_updates "$LOCAL_FILES_MAIN" "$GITHUB_RAW_URLS_MAIN"
-
 # Función para decidir qué archivo .sh ejecutar
 script() {
   clear
-  echo "Seleccione archivo a ejecutar:"
+  echo ""
+  echo "___ _______________________________ ________ "
+  echo "|  \|___[__ |   |__||__/| __|__||  \|  ||__/ "
+  echo "|__/|______]|___|  ||  \|__]|  ||__/|__||  \ "
+  echo "                                             "
+  echo "Seleccione Plataforma:"
   echo "------------------------------"
   echo ""
   echo -e "\e[32m1. NES  (Nintendo Entertainment System)\e[0m"
@@ -91,47 +92,64 @@ script() {
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
   echo ""
-  echo -e "\e[32m0. Salir\e[0m"
+  echo -e "\e[32mu. Actualizar Scripts\e[0m"
+  echo -e "\e[32mq. Salir\e[0m"
   echo ""
   echo "------------------------------"
   echo ""
   local option=""
-  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "0" ]; do
-    read -p "Ingrese una opcion valida (0-6): " option
+  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "u" ] && [ "$option" != "q" ]; do
+    read -p "Opcion > " option
   done
   case "$option" in
     1)
-      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+      clear
       script="$LOCAL_FILES_NES"
       ;;
     2)
-      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+      clear
       script="$LOCAL_FILES_PSX"
       ;;
     3)
-      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+      clear
       script="$LOCAL_FILES_GB"
       ;;
     4)
-      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+      clear
       script="$LOCAL_FILES_GBA"
       ;;
     5)
-      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+      clear
       script="$LOCAL_FILES_GBC"
       ;;
     6)
-      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      clear
       script="$LOCAL_FILES_SNES"
       ;;
-    0)
+    u)
+      clear
+      check_for_updates "$LOCAL_FILES_MAIN" "$GITHUB_RAW_URLS_MAIN"
+      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      ;;
+    q)
       clear
       exit 0
       ;;
   esac
-  echo "Ejecutando $script..."
-  chmod +x "$script"
-  "$script"
+  if [ "$option" != "u" ]; then
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
+  else
+    script
+  fi
+  return
 }
 
 # Llamar a la función para decidir qué archivo .sh ejecutar

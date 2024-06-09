@@ -32,11 +32,12 @@ sort -u temp_files/file_list_gba_3.txt -o temp_files/file_list_gba_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GBA"
-  # Validar si hay archivos o directorios sin la extension .gba
-  local invalid_files=$(find "../Roms/GBA" ! -name "*.gba")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type f -delete
-    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type d -delete
+    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type f -delete
+    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type d -delete
   fi
 }
 
@@ -70,10 +71,8 @@ show_page() {
   done < temp_files/file_list_gba.txt
    echo ""
   echo "------------------"
-  echo "n. Pagina siguiente"
-  echo "p. Pagina anterior"
-  echo "s. Buscar por nombre"
-  echo "m. Regresar al menu de plataformas"
+  echo "n. Pagina siguiente   p. Pagina anterior"
+  echo "s. Buscar por nombre  m. Menu de plataformas"
   echo "q. Salir"
   echo ""
 }
@@ -210,11 +209,6 @@ while true; do
       clear
       search_file
       ;;
-    [0-9])
-      index=$((choice - 1))
-      echo "Descargando..."
-      download_file "$index"
-      ;;
     n)
       page=$((page + 1))
       if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gba.txt | head -n 1 >/dev/null 2>&1; then
@@ -239,8 +233,12 @@ while true; do
       ./main.sh
       break
       ;;
+    ''|*[!0-9]*)
+      echo "Opción inválida."
+      ;;
     *)
-      echo "Opcion invalida."
+      index=$((choice - 1))
+      download_file "$index"
       ;;
   esac
 done

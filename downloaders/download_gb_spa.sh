@@ -31,11 +31,12 @@ sort -u temp_files/file_list_gb_3.txt -o temp_files/file_list_gb_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GB"
-  # Validar si hay archivos o directorios sin la extension .gb
-  local invalid_files=$(find "../Roms/GB" ! -name "*.gb")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GB" ! -name "*.gb" ! -name "*.GB" -type f -delete
-    find "../Roms/GB" ! -name "*.gb" ! -name "*.GB" -type d -delete
+    find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*" -type f -delete
+    find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*" -type d -delete
   fi
 }
 
@@ -69,10 +70,8 @@ show_page() {
   done < temp_files/file_list_gb.txt
    echo ""
   echo "------------------"
-  echo "n. Pagina siguiente"
-  echo "p. Pagina anterior"
-  echo "s. Buscar por nombre"
-  echo "m. Regresar al menu de plataformas"
+  echo "n. Pagina siguiente   p. Pagina anterior"
+  echo "s. Buscar por nombre  m. Menu de plataformas"
   echo "q. Salir"
   echo ""
 }
@@ -209,11 +208,6 @@ while true; do
       clear
       search_file
       ;;
-    [0-9])
-      index=$((choice - 1))
-      echo "Descargando..."
-      download_file "$index"
-      ;;
     n)
       page=$((page + 1))
       if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gb.txt | head -n 1 >/dev/null 2>&1; then
@@ -238,8 +232,12 @@ while true; do
       ./main.sh
       break
       ;;
+    ''|*[!0-9]*)
+      echo "Opción inválida."
+      ;;
     *)
-      echo "Opcion invalida."
+      index=$((choice - 1))
+      download_file "$index"
       ;;
   esac
 done
