@@ -213,10 +213,12 @@ while true; do
       clear
       search_file
       ;;
-    [0-9])
-      index=$((choice - 1))
-      echo "Descargando..."
-      download_file "$index"
+    [0-9]*)
+      if [[ "$choice" =~ ^[0-9]+$ ]]; then
+        index=$((choice - 1))
+        echo "Descargando..."
+        download_file "$index"
+      fi
       ;;
     n)
       page=$((page + 1))
