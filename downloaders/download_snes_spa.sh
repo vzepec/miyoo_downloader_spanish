@@ -11,8 +11,7 @@ BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-s
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.smc\|\.sfc"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes.txt
-
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(smc\|sfc\|zip\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes.txt
 # Descargar la lista de archivos para BASE_URL2
 wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_2.txt
 
@@ -159,6 +158,8 @@ download_filtered_file() {
       wget -P "../Roms/SFC/" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_snes_3.txt; then
       wget -P "../Roms/SFC/" "$BASE_URL3$line"
+    elif echo "$line" | grep -q -E '\.zip$'; then
+      wget -P "../Roms/SFC/" "$BASE_URL$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -181,11 +182,13 @@ download_file() {
       if echo "$line" | grep -q -E '\.smc$|\.sfc$'; then
         wget -P "../Roms/SFC/" "$BASE_URL$line"
       else
-        if grep -q "$line" temp_files/file_list_snes_2.txt; then
-          wget -P "../Roms/SFC/" "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_snes_3.txt; then
-          wget -P "../Roms/SFC/" "$BASE_URL3$line"
-        fi
+          if grep -q "$line" temp_files/file_list_snes_2.txt; then
+            wget -P "../Roms/SFC/" "$BASE_URL2$line"
+          elif grep -q "$line" temp_files/file_list_snes_3.txt; then
+            wget -P "../Roms/SFC/" "$BASE_URL3$line"
+          elif echo "$line" | grep -q -E '\.zip$'; then
+            wget -P "../Roms/SFC/" "$BASE_URL$line"
+          fi
       fi
       file_name=$(perform_substitution "$line")
       mv "../Roms/SFC/$line" "../Roms/SFC/$file_name"
