@@ -10,7 +10,7 @@ BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-g
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.gb\|\.GB"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gb.txt
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(gb\|GB\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gb.txt
 
 # Descargar la lista de archivos para BASE_URL2
 wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gb_2.txt
