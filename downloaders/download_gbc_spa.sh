@@ -203,31 +203,45 @@ download_file() {
 page=0
 while true; do
   show_page "$page"
-  echo -n "Seleciona un juego a descargar (numero), navegar (n/p), o salir (q): "
+  echo -n "Seleciona un juego a descargar (numero), navegar (n/p), volver al menu de plataformas (m) o salir (q): "
   read -r choice
-  if [ "$choice" = "s" ]; then
-    search_file
-  elif echo "$choice" | grep -q '^[0-9]\+$'; then
-    index=$((choice - 1))
-    echo "Descargando..."
-    download_file "$index"
-  elif [ "$choice" = "n" ]; then
-    page=$((page + 1))
-    if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gbc.txt | head -n 1 >/dev/null 2>&1; then
-      page=$((page - 1))
-      echo "No hay mas paginas."
-    fi
-  elif [ "$choice" = "p" ]; then
-    if [ "$page" -gt 0 ]; then
-      page=$((page - 1))
-    else
-      echo "Ya estas en la primera pagina"
-    fi
-  elif [ "$choice" = "q" ]; then
-    break
-  else
-    echo "Opcion invalida."
-  fi
+  case "$choice" in
+    s)
+      search_file
+      ;;
+    [0-9])
+      index=$((choice - 1))
+      echo "Descargando..."
+      download_file "$index"
+      ;;
+    n)
+      page=$((page + 1))
+      if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gbc.txt | head -n 1 >/dev/null 2>&1; then
+        page=$((page - 1))
+        echo "No hay mas paginas."
+      fi
+      ;;
+    p)
+      if [ "$page" -gt 0 ]; then
+        page=$((page - 1))
+      else
+        echo "Ya estas en la primera pagina"
+      fi
+      ;;
+    q)
+      clear
+      break
+      ;;
+    m)
+      echo "Regresando al menú principal..."
+      rm -rf temp_files
+      ./main.sh
+      break
+      ;;
+    *)
+      echo "Opcion invalida."
+      ;;
+  esac
 done
 
 # Cleanup

@@ -90,12 +90,13 @@ script() {
   echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
+  echo -e "\e[32m0. Salir\e[0m"
   echo ""
   echo "------------------------------"
   echo ""
   local option=""
-  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ]; do
-    read -p "Ingrese una opcion valida (1-6): " option
+  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "0" ]; do
+    read -p "Ingrese una opcion valida (0-6): " option
   done
   case "$option" in
     1)
@@ -121,6 +122,10 @@ script() {
     6)
       check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
       script="$LOCAL_FILES_SNES"
+      ;;
+    0)
+      clear
+      exit 0
       ;;
   esac
   echo "Ejecutando $script..."
