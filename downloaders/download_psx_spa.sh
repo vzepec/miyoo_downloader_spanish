@@ -71,8 +71,9 @@ show_page() {
   done < temp_files/file_list.txt
   echo ""
   echo "------------------"
-  echo "n. Pagina siguiente   p. Pagina anterior   s. Buscar por nombre"
-  echo "m. Regresar al menu de plataformas   q. Salir"
+  echo "n. Pagina siguiente   p. Pagina anterior"
+  echo "s. Buscar por nombre  m. Menu de plataformas"
+  echo "q. Salir"
   echo ""
 }
 

@@ -129,6 +129,7 @@ script() {
       exit 0
       ;;
   esac
+  clear
   echo "Ejecutando $script..."
   chmod +x "$script"
   "$script"
