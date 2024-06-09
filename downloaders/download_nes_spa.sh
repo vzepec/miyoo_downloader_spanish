@@ -4,20 +4,22 @@
 BASE_URL="https://archive.org/download/nes-compilacion-de-traducciones-en-espanol_202404/"
 BASE_URL2="https://archive.org/download/compilacion-traducciones-en-castellano-nes/"
  
+# Crear la carpeta temp_files si no existe
+mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > file_list_nes.txt
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
 
 # Descargar la lista de archivos para BASE_URL2
-wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > file_list_nes_2.txt
+wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt
 
-# Agregar archivos de BASE_URL2 a file_list_nes.txt
-cat file_list_nes_2.txt >> file_list_nes.txt
+# Agregar archivos de BASE_URL2 a temp_files/file_list_nes.txt
+cat temp_files/file_list_nes_2.txt >> temp_files/file_list_nes.txt
 
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
-sort -u file_list_nes.txt -o file_list_nes.txt
-sort -u file_list_nes_2.txt -o file_list_nes_2.txt
+sort -u temp_files/file_list_nes.txt -o temp_files/file_list_nes.txt
+sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
 #sort -u file_list_3.txt -o file_list_3.txt
 
 # Función para descomprimir archivos .zip
@@ -45,7 +47,7 @@ show_page() {
   local end=$((start + 10))
   local i=0
   local line
-  local total_files=$(wc -l < file_list_nes.txt)
+  local total_files=$(wc -l < temp_files/file_list_nes.txt)
   echo "Pagina $((page + 1)):"
   echo "Total juegos: $total_files"
   echo "------"
@@ -59,7 +61,7 @@ show_page() {
       fi
       echo -e "\e[32m$i. $file_name\e[0m"
     fi
-  done < file_list_nes.txt
+  done < temp_files/file_list_nes.txt
   echo ""
   echo "------------------"
   echo "n. Pagina siguiente"
@@ -74,8 +76,8 @@ search_file() {
   read -r search_name
   # Convertir la cadena de búsqueda en una expresión regular
   local search_regex=$(echo "$search_name" | sed 's/ /.* /g')
-  grep -i -E "$search_regex" file_list_nes.txt > search_results.txt
-  local total_results=$(wc -l < search_results.txt)
+  grep -i -E "$search_regex" temp_files/file_list_nes.txt > temp_files/search_results.txt
+  local total_results=$(wc -l < temp_files/search_results.txt)
   if [ $total_results -eq 0 ]; then
     echo "No hay resultados para '$search_name'."
   else
@@ -89,7 +91,7 @@ paginate_search_results() {
   local end=$((start + 10))
   local i=0
   local line
-  local total_results=$(wc -l < search_results.txt)
+  local total_results=$(wc -l < temp_files/search_results.txt)
   echo "Resultados de la busqueda - Pagina $((page + 1)):"
   echo "Total de resultados: $total_results"
   echo "------"
@@ -103,7 +105,7 @@ paginate_search_results() {
       fi
       echo -e "\e[32m$i. $file_name\e[0m"
     fi
-  done < search_results.txt
+  done < temp_files/search_results.txt
   echo ""
   echo "------------------"
   echo "n. Pagina siguiente"
@@ -114,12 +116,12 @@ paginate_search_results() {
   read -r choice
   if echo "$choice" | grep -q '^[0-9]\+$'; then
     index=$((choice - 1))
-    file_to_download=$(sed -n "$((index + 1))p" search_results.txt)  # Ajuste para obtener la línea correcta
+    file_to_download=$(sed -n "$((index + 1))p" temp_files/search_results.txt)  # Ajuste para obtener la línea correcta
     echo "Descargando $file_to_download..."
     download_filtered_file "$file_to_download"
   elif [ "$choice" = "n" ]; then
     page=$((page + 1))
-    if ! tail -n +$((page * 10 + 1)) search_results.txt | head -n 1 >/dev/null 2>&1; then
+    if ! tail -n +$((page * 10 + 1)) temp_files/search_results.txt | head -n 1 >/dev/null 2>&1; then
       page=$((page - 1))
       echo "No hay mas paginas."
     fi
@@ -144,7 +146,7 @@ download_filtered_file() {
   local line="$1"
   local file_name
 
-  if grep -q "$line" file_list_nes_2.txt; then
+  if grep -q "$line" temp_files/file_list_nes_2.txt; then
     wget -P "../Roms/FC/" "$BASE_URL2$line"
   else
     wget -P "../Roms/FC/" "$BASE_URL$line"
@@ -164,7 +166,7 @@ download_file() {
 
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
-      if grep -q "$line" file_list_nes_2.txt; then
+      if grep -q "$line" temp_files/file_list_nes_2.txt; then
         wget -P "../Roms/FC/" "$BASE_URL2$line"
       else
         wget -P "../Roms/FC/" "$BASE_URL$line"
@@ -176,7 +178,7 @@ download_file() {
       break
     fi
     i=$((i + 1))
-  done < file_list_nes.txt
+  done < temp_files/file_list_nes.txt
 }
 
 # Inicializar variables
@@ -193,7 +195,7 @@ while true; do
     download_file "$index"
   elif [ "$choice" = "n" ]; then
     page=$((page + 1))
-    if ! tail -n +$((page * 10 + 1)) file_list_nes.txt | head -n 1 >/dev/null 2>&1; then
+    if ! tail -n +$((page * 10 + 1)) temp_files/file_list_nes.txt | head -n 1 >/dev/null 2>&1; then
       page=$((page - 1))
       echo "No hay mas paginas."
     fi
@@ -211,6 +213,4 @@ while true; do
 done
 
 # Cleanup
-rm -f file_list_nes.txt
-rm -f file_list_nes_2.txt
-rm -f search_results.txt
+rm -rf temp_files
