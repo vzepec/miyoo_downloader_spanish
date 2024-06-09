@@ -209,11 +209,6 @@ while true; do
       clear
       search_file
       ;;
-    [0-9])
-      index=$((choice - 1))
-      echo "Descargando..."
-      download_file "$index"
-      ;;
     n)
       page=$((page + 1))
       if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gb.txt | head -n 1 >/dev/null 2>&1; then
@@ -238,8 +233,12 @@ while true; do
       ./main.sh
       break
       ;;
+    ''|*[!0-9]*)
+      echo "Opción inválida."
+      ;;
     *)
-      echo "Opcion invalida."
+      index=$((choice - 1))
+      download_file "$index"
       ;;
   esac
 done
