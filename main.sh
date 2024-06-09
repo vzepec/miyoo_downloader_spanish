@@ -4,15 +4,15 @@
 GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/download_nes_spa.sh"
 GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/download_psx_spa.sh"
 TOKEN="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"
-LOCAL_FILE_NES="download_nes_spa.sh"
-LOCAL_FILE_PSX="download_psx_spa.sh"
+LOCAL_FILE_NES="downloaders/download_nes_spa.sh"
+LOCAL_FILE_PSX="downloaders/download_psx_spa.sh"
 
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
   local file_to_update="$1"
   local GITHUB_RAW_URL="$2"
   clear
-  echo "Buscando actualizaciones... para $file_to_update"
+  echo "Buscando actualizaciones para $file_to_update ..."
 
   # Crear un archivo temporal
   TEMP_FILE=$(mktemp)
@@ -32,24 +32,41 @@ check_for_updates() {
     exit 1
   fi
 
-  # Comparar el archivo local con el archivo remoto
-  if cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya esta actualizado."
+  # Si el archivo no existe se deja la ultima version de develop
+  if [ ! -f "$file_to_update" ]; then
+    echo "El archivo local no existe."
+    echo "Descargando el archivo..."
+
+    # Verificar si el directorio existe, si no, crearlo
+    if [ ! -d "$(dirname "$file_to_update")" ]; then
+      mkdir -p "$(dirname "$file_to_update")"
+    fi
+
+    mv "$TEMP_FILE" "$file_to_update"
+    chmod +x "$file_to_update"
+    echo "Archivo descargado y permisos aplicados."
+
+  # Si el archivo local es igual a la ultima version de develop
+  elif cmp -s "$file_to_update" "$TEMP_FILE"; then
+    echo "El archivo local ya está actualizado."
+
+  # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
   else
-    echo "Hay una actualizacion disponible. Descargando el archivo actualizado..."
+    echo "Hay una actualización disponible."
+    echo "Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo actualizado descargado y permisos aplicados."
   fi
-
+ 
   # Limpiar el archivo temporal si todavía existe
   [ -f "$TEMP_FILE" ] && rm -f "$TEMP_FILE"
 }
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
-  local script1="./download_nes_spa.sh"
-  local script2="./download_psx_spa.sh"
+  local script1="./downloaders/download_nes_spa.sh"
+  local script2="./downloaders/download_psx_spa.sh"
   clear
   echo "Seleccione archivo a ejecutar:"
   echo "------------------------------"
