@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # GitHub API variables
-GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/download_nes_spa.sh"
-GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/download_psx_spa.sh"
+GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
+GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
 TOKEN="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"
 LOCAL_FILE_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILE_PSX="downloaders/download_psx_spa.sh"
