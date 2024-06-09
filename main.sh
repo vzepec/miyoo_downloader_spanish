@@ -64,7 +64,7 @@ check_for_updates() {
 
   # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
   else
-    echo "Hay una actualización disponible."
+    echo "Hay una actualizacion disponible."
     echo "Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
