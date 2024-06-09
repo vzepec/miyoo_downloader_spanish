@@ -55,7 +55,7 @@ show_page() {
   local total_files=$(wc -l < temp_files/file_list_nes.txt)
   echo "Pagina $((page + 1)):"
   echo "Total de juegos: $total_files"
-  echo "------"
+  echo "----------------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
     i=$((i + 1))
@@ -71,13 +71,14 @@ show_page() {
   echo "------------------"
   echo "n. Pagina siguiente"
   echo "p. Pagina anterior"
-  echo "q. Salir"
   echo "s. Buscar por nombre"
+  echo "m. Regresar al menu de plataformas"
+  echo "q. Salir"
   echo ""
 }
 
 search_file() {
-  echo -n "Escribe el juego a buscar: "
+  echo -n "Escribe el juego a buscar > "
   read -r search_name
   # Convertir la cadena de búsqueda en una expresión regular
   local search_regex=$(echo "$search_name" | sed 's/ /.* /g')
@@ -97,9 +98,10 @@ paginate_search_results() {
   local i=0
   local line
   local total_results=$(wc -l < temp_files/search_results.txt)
+  clear
   echo "Resultados de la busqueda - Pagina $((page + 1)):"
   echo "Total de resultados: $total_results"
-  echo "------"
+  echo "-------------------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
     i=$((i + 1))
@@ -117,8 +119,7 @@ paginate_search_results() {
   echo "p. Pagina anterior"
   echo "m. Menu"
   echo ""
-  echo "Seleccionar un juego a descargar (numero) o navegar (n/p/m): "
-  read -r choice
+  read -p "Opcion > " choice
   if echo "$choice" | grep -q '^[0-9]\+$'; then
     index=$((choice - 1))
     file_to_download=$(sed -n "$((index + 1))p" temp_files/search_results.txt)  # Ajuste para obtener la línea correcta
@@ -202,10 +203,10 @@ download_file() {
 page=0
 while true; do
   show_page "$page"
-  echo -n "Seleciona un juego a descargar (numero), navegar (n/p), volver al menu de plataformas (m) o salir (q): "
-  read -r choice
+  read -p "Opcion > " choice
   case "$choice" in
     s)
+      clear
       search_file
       ;;
     [0-9])
