@@ -3,9 +3,11 @@
 # GitHub API variables
 GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
 GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
+GITHUB_RAW_URL_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
 TOKEN="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"
 LOCAL_FILE_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILE_PSX="downloaders/download_psx_spa.sh"
+LOCAL_FILE_MAIN="main.sh" 
 
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
@@ -62,6 +64,9 @@ check_for_updates() {
   # Limpiar el archivo temporal si todavía existe
   [ -f "$TEMP_FILE" ] && rm -f "$TEMP_FILE"
 }
+
+# Se actualiza el archivo Main
+check_for_updates "$LOCAL_FILE_MAIN" "$GITHUB_RAW_URL_MAIN"
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
