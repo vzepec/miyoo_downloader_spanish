@@ -71,11 +71,8 @@ show_page() {
   done < temp_files/file_list_nes.txt
   echo ""
   echo "------------------"
-  echo "n. Pagina siguiente"
-  echo "p. Pagina anterior"
-  echo "s. Buscar por nombre"
-  echo "m. Regresar al menu de plataformas"
-  echo "q. Salir"
+  echo "n. Pagina siguiente   p. Pagina anterior   s. Buscar por nombre"
+  echo "m. Regresar al menu de plataformas   q. Salir"
   echo ""
 }
 
