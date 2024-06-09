@@ -132,6 +132,7 @@ script() {
   echo "Ejecutando $script..."
   chmod +x "$script"
   "$script"
+  return
 }
 
 # Llamar a la función para decidir qué archivo .sh ejecutar
