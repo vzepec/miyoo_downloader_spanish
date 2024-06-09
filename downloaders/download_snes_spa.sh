@@ -213,13 +213,6 @@ while true; do
       clear
       search_file
       ;;
-    [0-9]*)
-      if [[ "$choice" =~ ^[0-9]+$ ]]; then
-        index=$((choice - 1))
-        echo "Descargando..."
-        download_file "$index"
-      fi
-      ;;
     n)
       page=$((page + 1))
       if ! tail -n +$((page * 10 + 1)) temp_files/file_list_snes.txt | head -n 1 >/dev/null 2>&1; then
@@ -245,7 +238,12 @@ while true; do
       break
       ;;
     *)
-      echo "Opcion invalida."
+      if [[ "$choice" =~ ^[0-9]+$ ]]; then
+        index=$((choice - 1))
+        download_file "$index"
+      else
+        echo "Opción inválida."
+      fi
       ;;
   esac
 done
