@@ -82,7 +82,7 @@ check_for_updates() {
 }
 
 # Se actualiza el archivo Main
-check_for_updates "$LOCAL_FILE_MAIN" "$GITHUB_RAW_URL_MAIN"
+check_for_updates "$LOCAL_FILE_MAIN" "${GITHUB_RAW_URLS["MAIN"]}"
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
