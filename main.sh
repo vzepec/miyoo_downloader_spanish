@@ -1,13 +1,29 @@
 #!/bin/sh
 
 # GitHub API variables
-GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
-GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
-GITHUB_RAW_URL_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+declare -A GITHUB_RAW_URLS
+GITHUB_RAW_URLS=(
+  ["NES"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
+  ["PSX"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
+  ["GB"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gb_spa.sh"
+  ["GBA"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gba_spa.sh"
+  ["GBC"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gbc_spa.sh"
+  ["SNES"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_snes_spa.sh"
+  ["MAIN"]="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+)
+
+declare -A LOCAL_FILES
+LOCAL_FILES=(
+  ["NES"]="downloaders/download_nes_spa.sh"
+  ["PSX"]="downloaders/download_psx_spa.sh"
+  ["GB"]="downloaders/download_gb_spa.sh"
+  ["GBA"]="downloaders/download_gba_spa.sh"
+  ["GBC"]="downloaders/download_gbc_spa.sh"
+  ["SNES"]="downloaders/download_snes_spa.sh"
+  ["MAIN"]="main.sh"
+)
+
 TOKEN="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"
-LOCAL_FILE_NES="downloaders/download_nes_spa.sh"
-LOCAL_FILE_PSX="downloaders/download_psx_spa.sh"
-LOCAL_FILE_MAIN="main.sh" 
 
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
@@ -70,28 +86,59 @@ check_for_updates "$LOCAL_FILE_MAIN" "$GITHUB_RAW_URL_MAIN"
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
-  local script1="./downloaders/download_nes_spa.sh"
-  local script2="./downloaders/download_psx_spa.sh"
   clear
   echo "Seleccione archivo a ejecutar:"
   echo "------------------------------"
-  echo "1. NES"
-  echo "2. PSX"
+  echo ""
+  echo -e "\e[32m1. NES  (Nintendo Entertainment System)\e[0m"
+  echo -e "\e[32m2. PSX  (Plastation 1)\e[0m"
+  echo -e "\e[32m3. GB   (Gameboy)\e[0m"
+  echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
+  echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
+  echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
+  echo ""
+  echo "------------------------------"
   echo ""
   local option=""
-  while [ "$option" != "1" ] && [ "$option" != "2" ]; do
-    read -p "Ingrese una opcion valida (1 o 2): " option
+  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ]; do
+    read -p "Ingrese una opcion valida (1-6): " option
   done
   if [ "$option" = "1" ]; then
-    check_for_updates "$LOCAL_FILE_NES" "$GITHUB_RAW_URL_NES"
-    echo "Ejecutando $script1..."
-    chmod +x "$script1"
-    "$script1"
+    check_for_updates "${LOCAL_FILES["NES"]}" "${GITHUB_RAW_URLS["NES"]}"
+    script="${LOCAL_FILES["NES"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
   elif [ "$option" = "2" ]; then
-    check_for_updates "$LOCAL_FILE_PSX" "$GITHUB_RAW_URL_PSX"
-    echo "Ejecutando $script2..."
-    chmod +x "$script2"
-    "$script2"
+    check_for_updates "${LOCAL_FILES["PSX"]}" "${GITHUB_RAW_URLS["PSX"]}"
+    script="${LOCAL_FILES["PSX"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
+  elif [ "$option" = "3" ]; then
+    check_for_updates "${LOCAL_FILES["GB"]}" "${GITHUB_RAW_URLS["GB"]}"
+    script="${LOCAL_FILES["GB"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
+  elif [ "$option" = "4" ]; then
+    check_for_updates "${LOCAL_FILES["GBA"]}" "${GITHUB_RAW_URLS["GBA"]}"
+    script="${LOCAL_FILES["GBA"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
+  elif [ "$option" = "5" ]; then
+    check_for_updates "${LOCAL_FILES["GBC"]}" "${GITHUB_RAW_URLS["GBC"]}"
+    script="${LOCAL_FILES["GBC"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
+  elif [ "$option" = "6" ]; then
+    check_for_updates "${LOCAL_FILES["SNES"]}" "${GITHUB_RAW_URLS["SNES"]}"
+    script="${LOCAL_FILES["SNES"]}"
+    echo "Ejecutando $script..."
+    chmod +x "$script"
+    "$script"
   fi
 }
 
