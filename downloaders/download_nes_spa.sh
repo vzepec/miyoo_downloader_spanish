@@ -28,14 +28,16 @@ sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
 sort -u temp_files/file_list_nes_3.txt -o temp_files/file_list_nes_3.txt
 
 # Función para descomprimir archivos .zip
+# Función para descomprimir archivos .zip
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/FC"
-  # Validar si hay archivos o directorios sin la extension .nes
-  local invalid_files=$(find "../Roms/FC" ! -name "*.nes")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -type f -delete
-    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -type d -delete
+    find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*" -type f -delete
+    find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*" -type d -delete
   fi
 }
 

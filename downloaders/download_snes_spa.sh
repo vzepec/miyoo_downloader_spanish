@@ -31,11 +31,12 @@ sort -u temp_files/file_list_snes_3.txt -o temp_files/file_list_snes_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/SFC"
-  # Validar si hay archivos o directorios sin la extension .smc
-  local invalid_files=$(find "../Roms/SFC" ! -name "*.smc")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/SFC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/SFC/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/SFC" ! -name "*.smc" ! -name "*.sfc" -type f -delete
-    find "../Roms/SFC" ! -name "*.smc" ! -name "*.sfc" -type d -delete
+    find "../Roms/SFC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/SFC/Imgs/*" -type f -delete
+    find "../Roms/SFC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/SFC/Imgs/*" -type d -delete
   fi
 }
 

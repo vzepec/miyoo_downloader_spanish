@@ -32,11 +32,12 @@ sort -u temp_files/file_list_gba_3.txt -o temp_files/file_list_gba_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GBA"
-  # Validar si hay archivos o directorios sin la extension .gba
-  local invalid_files=$(find "../Roms/GBA" ! -name "*.gba")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type f -delete
-    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type d -delete
+    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type f -delete
+    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type d -delete
   fi
 }
 

@@ -31,11 +31,12 @@ sort -u temp_files/file_list_gb_3.txt -o temp_files/file_list_gb_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GB"
-  # Validar si hay archivos o directorios sin la extension .gb
-  local invalid_files=$(find "../Roms/GB" ! -name "*.gb")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GB" ! -name "*.gb" ! -name "*.GB" -type f -delete
-    find "../Roms/GB" ! -name "*.gb" ! -name "*.GB" -type d -delete
+    find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*" -type f -delete
+    find "../Roms/GB" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GB/Imgs/*" -type d -delete
   fi
 }
 

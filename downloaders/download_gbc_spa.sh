@@ -32,11 +32,12 @@ sort -u temp_files/file_list_gbc_3.txt -o temp_files/file_list_gbc_3.txt
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GBC"
-  # Validar si hay archivos o directorios sin la extension .gbc
-  local invalid_files=$(find "../Roms/GBC" ! -name "*.gbc")
+  
+  # Validar si hay archivos o directorios sin la extension .smc o .sfc
+  local invalid_files=$(find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GBC" ! -name "*.gbc" ! -name "*.GBC" -type f -delete
-    find "../Roms/GBC" ! -name "*.gbc" ! -name "*.GBC" -type d -delete
+    find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*" -type f -delete
+    find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*" -type d -delete
   fi
 }
 
