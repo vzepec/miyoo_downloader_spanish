@@ -1,26 +1,31 @@
 #!/bin/sh
 
 # URL base
-BASE_URL="https://archive.org/download/nes-compilacion-de-traducciones-en-espanol_202404/"
-BASE_URL2="https://archive.org/download/compilacion-traducciones-en-castellano-nes/"
- 
+BASE_URL="https://archive.org/download/kirbys-adventure-nes-roms-nintendo-en-espanol/"
+BASE_URL2="https://archive.org/download/nes-compilacion-de-traducciones-en-espanol_202404/"
+BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-nes/"
+
+
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.nes\|\.NES"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
 
 # Descargar la lista de archivos para BASE_URL2
 wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt
 
-# Agregar archivos de BASE_URL2 a temp_files/file_list_nes.txt
-cat temp_files/file_list_nes_2.txt >> temp_files/file_list_nes.txt
+# Descargar la lista de archivos para BASE_URL3
+wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
 
+# Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_nes.txt
+cat temp_files/file_list_nes_2.txt >> temp_files/file_list_nes.txt
+cat temp_files/file_list_nes_3.txt >> temp_files/file_list_nes.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_nes.txt -o temp_files/file_list_nes.txt
 sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
-#sort -u file_list_3.txt -o file_list_3.txt
+sort -u temp_files/file_list_nes_3.txt -o temp_files/file_list_nes_3.txt
 
 # Función para descomprimir archivos .zip
 extract_zip() {
@@ -29,14 +34,14 @@ extract_zip() {
   # Validar si hay archivos o directorios sin la extension .nes
   local invalid_files=$(find "../Roms/FC" ! -name "*.nes")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/FC" ! -name "*.nes" -type f -delete
-    find "../Roms/FC" ! -name "*.nes" -type d -delete
+    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -type f -delete
+    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -type d -delete
   fi
 }
 
 # Función para realizar la sustitución
 perform_substitution() {
-  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/í/g' -e 's/%C3%B3/ó/g' -e 's/%C3%B1/ñ/g'
+  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/í/g' -e 's/%C3%B3/ó/g' -e 's/%C3%A9/e/g' -e 's/%C3%B1/n/g'
 }
 
 # Función para mostrar una página de archivos
@@ -49,7 +54,7 @@ show_page() {
   local line
   local total_files=$(wc -l < temp_files/file_list_nes.txt)
   echo "Pagina $((page + 1)):"
-  echo "Total juegos: $total_files"
+  echo "Total de juegos: $total_files"
   echo "------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
@@ -146,14 +151,20 @@ download_filtered_file() {
   local line="$1"
   local file_name
 
-  if grep -q "$line" temp_files/file_list_nes_2.txt; then
-    wget -P "../Roms/FC/" "$BASE_URL2$line"
-  else
+  if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
     wget -P "../Roms/FC/" "$BASE_URL$line"
+  else
+    if grep -q "$line" temp_files/file_list_nes_2.txt; then
+      wget -P "../Roms/FC/" "$BASE_URL2$line"
+    elif grep -q "$line" temp_files/file_list_nes_3.txt; then
+      wget -P "../Roms/FC/" "$BASE_URL3$line"
+    fi
   fi
   file_name=$(perform_substitution "$line")
   mv "../Roms/FC/$line" "../Roms/FC/$file_name"
-  extract_zip "../Roms/FC/$file_name"
+  if echo "$line" | grep -q '\.zip$'; then
+    extract_zip "../Roms/FC/$file_name"
+  fi
   echo "Descarga completa: ../Roms/FC/$file_name"
 }
 
@@ -166,14 +177,20 @@ download_file() {
 
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
-      if grep -q "$line" temp_files/file_list_nes_2.txt; then
-        wget -P "../Roms/FC/" "$BASE_URL2$line"
-      else
+      if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
         wget -P "../Roms/FC/" "$BASE_URL$line"
+      else
+        if grep -q "$line" temp_files/file_list_nes_2.txt; then
+          wget -P "../Roms/FC/" "$BASE_URL2$line"
+        elif grep -q "$line" temp_files/file_list_nes_3.txt; then
+          wget -P "../Roms/FC/" "$BASE_URL3$line"
+        fi
       fi
       file_name=$(perform_substitution "$line")
       mv "../Roms/FC/$line" "../Roms/FC/$file_name"
-      extract_zip "../Roms/FC/$file_name"
+      if echo "$line" | grep -q '\.zip$'; then
+        extract_zip "../Roms/FC/$file_name"
+      fi
       echo "Descarga completa: ../Roms/FC/$file_name"
       break
     fi
