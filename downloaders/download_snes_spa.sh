@@ -237,13 +237,12 @@ while true; do
       ./main.sh
       break
       ;;
+    ''|*[!0-9]*)
+      echo "Opción inválida."
+      ;;
     *)
-      if [[ "$choice" =~ ^[0-9]+$ ]]; then
-        index=$((choice - 1))
-        download_file "$index"
-      else
-        echo "Opción inválida."
-      fi
+      index=$((choice - 1))
+      download_file "$index"
       ;;
   esac
 done
