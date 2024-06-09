@@ -90,6 +90,7 @@ script() {
   echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
+  echo ""
   echo -e "\e[32m0. Salir\e[0m"
   echo ""
   echo "------------------------------"
