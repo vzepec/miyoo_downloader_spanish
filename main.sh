@@ -1,13 +1,23 @@
 #!/bin/sh
 
 # GitHub API variables
-GITHUB_RAW_URL_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
-GITHUB_RAW_URL_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
-GITHUB_RAW_URL_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+GITHUB_RAW_URLS_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
+GITHUB_RAW_URLS_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
+GITHUB_RAW_URLS_GB="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gb_spa.sh"
+GITHUB_RAW_URLS_GBA="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gba_spa.sh"
+GITHUB_RAW_URLS_GBC="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gbc_spa.sh"
+GITHUB_RAW_URLS_SNES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_snes_spa.sh"
+GITHUB_RAW_URLS_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+
+LOCAL_FILES_NES="downloaders/download_nes_spa.sh"
+LOCAL_FILES_PSX="downloaders/download_psx_spa.sh"
+LOCAL_FILES_GB="downloaders/download_gb_spa.sh"
+LOCAL_FILES_GBA="downloaders/download_gba_spa.sh"
+LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
+LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
+LOCAL_FILES_MAIN="main.sh"
+
 TOKEN="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"
-LOCAL_FILE_NES="downloaders/download_nes_spa.sh"
-LOCAL_FILE_PSX="downloaders/download_psx_spa.sh"
-LOCAL_FILE_MAIN="main.sh" 
 
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
@@ -50,11 +60,11 @@ check_for_updates() {
 
   # Si el archivo local es igual a la ultima version de develop
   elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya está actualizado."
+    echo "El archivo local ya esta actualizado."
 
   # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
   else
-    echo "Hay una actualización disponible."
+    echo "Hay una actualizacion disponible."
     echo "Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
@@ -66,33 +76,62 @@ check_for_updates() {
 }
 
 # Se actualiza el archivo Main
-check_for_updates "$LOCAL_FILE_MAIN" "$GITHUB_RAW_URL_MAIN"
+check_for_updates "$LOCAL_FILES_MAIN" "$GITHUB_RAW_URLS_MAIN"
 
 # Función para decidir qué archivo .sh ejecutar
 script() {
-  local script1="./downloaders/download_nes_spa.sh"
-  local script2="./downloaders/download_psx_spa.sh"
   clear
   echo "Seleccione archivo a ejecutar:"
   echo "------------------------------"
-  echo "1. NES"
-  echo "2. PSX"
+  echo ""
+  echo -e "\e[32m1. NES  (Nintendo Entertainment System)\e[0m"
+  echo -e "\e[32m2. PSX  (Plastation 1)\e[0m"
+  echo -e "\e[32m3. GB   (Gameboy)\e[0m"
+  echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
+  echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
+  echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
+  echo ""
+  echo -e "\e[32m0. Salir\e[0m"
+  echo ""
+  echo "------------------------------"
   echo ""
   local option=""
-  while [ "$option" != "1" ] && [ "$option" != "2" ]; do
-    read -p "Ingrese una opcion valida (1 o 2): " option
+  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "0" ]; do
+    read -p "Ingrese una opcion valida (0-6): " option
   done
-  if [ "$option" = "1" ]; then
-    check_for_updates "$LOCAL_FILE_NES" "$GITHUB_RAW_URL_NES"
-    echo "Ejecutando $script1..."
-    chmod +x "$script1"
-    "$script1"
-  elif [ "$option" = "2" ]; then
-    check_for_updates "$LOCAL_FILE_PSX" "$GITHUB_RAW_URL_PSX"
-    echo "Ejecutando $script2..."
-    chmod +x "$script2"
-    "$script2"
-  fi
+  case "$option" in
+    1)
+      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+      script="$LOCAL_FILES_NES"
+      ;;
+    2)
+      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+      script="$LOCAL_FILES_PSX"
+      ;;
+    3)
+      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+      script="$LOCAL_FILES_GB"
+      ;;
+    4)
+      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+      script="$LOCAL_FILES_GBA"
+      ;;
+    5)
+      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+      script="$LOCAL_FILES_GBC"
+      ;;
+    6)
+      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      script="$LOCAL_FILES_SNES"
+      ;;
+    0)
+      clear
+      exit 0
+      ;;
+  esac
+  echo "Ejecutando $script..."
+  chmod +x "$script"
+  "$script"
 }
 
 # Llamar a la función para decidir qué archivo .sh ejecutar

@@ -1,49 +1,48 @@
 #!/bin/sh
 
 # URL base
-BASE_URL="https://archive.org/download/chd_psx_eur/CHD-PSX-EUR/"
-BASE_URL2="https://archive.org/download/psx-compilacion-de-traducciones-en-espanol_202305/"
-BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-psx/"
+BASE_URL="https://archive.org/download/fire-emblem-the-sacred-stones-gba-roms-nintendo-en-espanol/"
+BASE_URL2="https://archive.org/download/gba-compilacion-de-traducciones-en-espanol_202404/"
+BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-gba/"
  
-# Función para filtrar archivos por idioma español (opcional)
-filter_spanish() {
-  grep -i "Es%2C" temp_files/file_list.txt > temp_files/file_list_filtered.txt
-  mv temp_files/file_list_filtered.txt temp_files/file_list.txt
-}
+
 
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt
-
-filter_spanish
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(gba\|GBA\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba.txt
 
 # Descargar la lista de archivos para BASE_URL2
-wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt
+wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_2.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
+wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_3.txt
 
-# Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list.txt
-cat temp_files/file_list_2.txt >> temp_files/file_list.txt
-cat temp_files/file_list_3.txt >> temp_files/file_list.txt
+# Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_gba.txt
+cat temp_files/file_list_gba_2.txt >> temp_files/file_list_gba.txt
+cat temp_files/file_list_gba_3.txt >> temp_files/file_list_gba.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
-sort -u temp_files/file_list.txt -o temp_files/file_list.txt
-sort -u temp_files/file_list_2.txt -o temp_files/file_list_2.txt
-sort -u temp_files/file_list_3.txt -o temp_files/file_list_3.txt
+sort -u temp_files/file_list_gba.txt -o temp_files/file_list_gba.txt
+sort -u temp_files/file_list_gba_2.txt -o temp_files/file_list_gba_2.txt
+sort -u temp_files/file_list_gba_3.txt -o temp_files/file_list_gba_3.txt
 
-# Función para descomprimir archivos .7z
-extract_7z() {
+# Función para descomprimir archivos .zip
+extract_zip() {
   local file="$1"
-  7z x "$file" -o"../Roms/PS"
-  rm "$file"
+  unzip "$file" -d "../Roms/GBA"
+  # Validar si hay archivos o directorios sin la extension .gba
+  local invalid_files=$(find "../Roms/GBA" ! -name "*.gba")
+  if [ -n "$invalid_files" ]; then
+    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type f -delete
+    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -type d -delete
+  fi
 }
 
 # Función para realizar la sustitución
 perform_substitution() {
-  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/í/g' -e 's/%C3%B3/ó/g'
+  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/í/g' -e 's/%C3%B3/ó/g' -e 's/%C3%A9/e/g'
 }
 
 # Función para mostrar una página de archivos
@@ -54,10 +53,10 @@ show_page() {
   local end=$((start + 10))
   local i=0
   local line
-  local total_files=$(wc -l < temp_files/file_list.txt)
+  local total_files=$(wc -l < temp_files/file_list_gba.txt)
   echo "Pagina $((page + 1)):"
   echo "Total de juegos: $total_files"
-  echo "---------------"
+  echo "----------------"
   echo ""
   while IFS= read -r line && [ $i -lt $end ]; do
     i=$((i + 1))
@@ -68,8 +67,8 @@ show_page() {
       fi
       echo -e "\e[32m$i. $file_name\e[0m"
     fi
-  done < temp_files/file_list.txt
-  echo ""
+  done < temp_files/file_list_gba.txt
+   echo ""
   echo "------------------"
   echo "n. Pagina siguiente"
   echo "p. Pagina anterior"
@@ -80,11 +79,11 @@ show_page() {
 }
 
 search_file() {
-  echo -n "Escribe el juego a buscar > "
+  echo -n "Escribe el juego a buscar: "
   read -r search_name
   # Convertir la cadena de búsqueda en una expresión regular
   local search_regex=$(echo "$search_name" | sed 's/ /.* /g')
-  grep -i -E "$search_regex" temp_files/file_list.txt > temp_files/search_results.txt
+  grep -i -E "$search_regex" temp_files/file_list_gba.txt > temp_files/search_results.txt
   local total_results=$(wc -l < temp_files/search_results.txt)
   if [ $total_results -eq 0 ]; then
     echo "No hay resultados para '$search_name'."
@@ -154,21 +153,21 @@ download_filtered_file() {
   local line="$1"
   local file_name
 
-  if echo "$line" | grep -q '\.chd$'; then
-    wget -P "../Roms/PS/" "$BASE_URL$line"
+  if echo "$line" | grep -q -E '\.gba$|\.GBA$'; then
+    wget -P "../Roms/GBA/" "$BASE_URL$line"
   else
-    if grep -q "$line" temp_files/file_list_2.txt; then
-      wget -P "../Roms/PS/" "$BASE_URL2$line"
-    elif grep -q "$line" temp_files/file_list_3.txt; then
-      wget -P "../Roms/PS/" "$BASE_URL3$line"
+    if grep -q "$line" temp_files/file_list_gba_2.txt; then
+      wget -P "../Roms/GBA/" "$BASE_URL2$line"
+    elif grep -q "$line" temp_files/file_list_gba_3.txt; then
+      wget -P "../Roms/GBA/" "$BASE_URL3$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
-  mv "../Roms/PS/$line" "../Roms/PS/$file_name"
-  if echo "$line" | grep -q '\.7z$'; then
-    extract_7z "../Roms/PS/$file_name"
+  mv "../Roms/GBA/$line" "../Roms/GBA/$file_name"
+  if echo "$line" | grep -q '\.zip$'; then
+    extract_zip "../Roms/GBA/$file_name"
   fi
-  echo "Descarga completa: ../Roms/PS/$file_name"
+  echo "Descarga completa: ../Roms/GBA/$file_name"
 }
 
 # Función para descargar el archivo seleccionado (corregida)
@@ -180,25 +179,25 @@ download_file() {
 
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
-      if echo "$line" | grep -q '\.chd$'; then
-        wget -P "../Roms/PS/" "$BASE_URL$line"
+      if echo "$line" | grep -q -E '\.gba$|\.GBA$'; then
+        wget -P "../Roms/GBA/" "$BASE_URL$line"
       else
-        if grep -q "$line" temp_files/file_list_2.txt; then
-          wget -P "../Roms/PS/" "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_3.txt; then
-          wget -P "../Roms/PS/" "$BASE_URL3$line"
+        if grep -q "$line" temp_files/file_list_gba_2.txt; then
+          wget -P "../Roms/GBA/" "$BASE_URL2$line"
+        elif grep -q "$line" temp_files/file_list_gba_3.txt; then
+          wget -P "../Roms/GBA/" "$BASE_URL3$line"
         fi
       fi
       file_name=$(perform_substitution "$line")
-      mv "../Roms/PS/$line" "../Roms/PS/$file_name"
-      if echo "$line" | grep -q '\.7z$'; then
-        extract_7z "../Roms/PS/$file_name"
+      mv "../Roms/GBA/$line" "../Roms/GBA/$file_name"
+      if echo "$line" | grep -q '\.zip$'; then
+        extract_zip "../Roms/GBA/$file_name"
       fi
-      echo "Descarga completa: ../Roms/PS/$file_name"
+      echo "Descarga completa: ../Roms/GBA/$file_name"
       break
     fi
     i=$((i + 1))
-  done < temp_files/file_list.txt
+  done < temp_files/file_list_gba.txt
 }
 
 # Inicializar variables
@@ -218,7 +217,7 @@ while true; do
       ;;
     n)
       page=$((page + 1))
-      if ! tail -n +$((page * 10 + 1)) temp_files/file_list.txt | head -n 1 >/dev/null 2>&1; then
+      if ! tail -n +$((page * 10 + 1)) temp_files/file_list_gba.txt | head -n 1 >/dev/null 2>&1; then
         page=$((page - 1))
         echo "No hay mas paginas."
       fi
