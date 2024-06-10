@@ -104,27 +104,57 @@ script() {
   case "$option" in
     1)
       clear
-      script="$LOCAL_FILES_NES"
+      if [ -f "$LOCAL_FILES_NES" ]; then
+        script="$LOCAL_FILES_NES"
+      else
+        check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+        script="$LOCAL_FILES_NES"
+      fi
       ;;
-    2)
+        2)
       clear
-      script="$LOCAL_FILES_PSX"
+      if [ -f "$LOCAL_FILES_PSX" ]; then
+        script="$LOCAL_FILES_PSX"
+      else
+        check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+        script="$LOCAL_FILES_PSX"
+      fi
       ;;
-    3)
+        3)
       clear
-      script="$LOCAL_FILES_GB"
+      if [ -f "$LOCAL_FILES_GB" ]; then
+        script="$LOCAL_FILES_GB"
+      else
+        check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+        script="$LOCAL_FILES_GB"
+      fi
       ;;
-    4)
+        4)
       clear
-      script="$LOCAL_FILES_GBA"
+      if [ -f "$LOCAL_FILES_GBA" ]; then
+        script="$LOCAL_FILES_GBA"
+      else
+        check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+        script="$LOCAL_FILES_GBA"
+      fi
       ;;
-    5)
+        5)
       clear
-      script="$LOCAL_FILES_GBC"
+      if [ -f "$LOCAL_FILES_GBC" ]; then
+        script="$LOCAL_FILES_GBC"
+      else
+        check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+        script="$LOCAL_FILES_GBC"
+      fi
       ;;
-    6)
+        6)
       clear
-      script="$LOCAL_FILES_SNES"
+      if [ -f "$LOCAL_FILES_SNES" ]; then
+        script="$LOCAL_FILES_SNES"
+      else
+        check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+        script="$LOCAL_FILES_SNES"
+      fi
       ;;
     u)
       clear
