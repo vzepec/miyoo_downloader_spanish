@@ -67,7 +67,7 @@ update_and_restart_main() {
 
   # Crear un archivo temporal
   TEMP_FILE=$(mktemp)
-  if [ ! -f "$TEMP_FILE" ]; then
+  if [ ! -f "$TEMP_FILE" ];then
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
@@ -77,13 +77,13 @@ update_and_restart_main() {
     exit 1
   }
 
-  if [ ! -s "$TEMP_FILE" ]; then
+  if [ ! -s "$TEMP_FILE" ];then
     echo "El archivo descargado está vacío. Revisa la URL y el repositorio."
     rm -f "$TEMP_FILE"
     exit 1
   fi
 
-  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE"; then
+  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE";then
     echo "El archivo local ya está actualizado."
     rm -f "$TEMP_FILE"
   else
@@ -92,7 +92,7 @@ update_and_restart_main() {
     chmod +x "$LOCAL_FILES_MAIN"
     echo "Archivo actualizado descargado y permisos aplicados."
     echo "Reiniciando script..."
-    exec "$LOCAL_FILES_MAIN"
+    exec "$(pwd)/$LOCAL_FILES_MAIN"
   fi
 }
 
