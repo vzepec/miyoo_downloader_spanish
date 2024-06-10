@@ -4,6 +4,7 @@
 BASE_URL="https://archive.org/download/chd_psx_eur/CHD-PSX-EUR/"
 BASE_URL2="https://archive.org/download/psx-compilacion-de-traducciones-en-espanol_202305/"
 BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-psx/"
+BASE_URL4="https://archive.org/download/valkyrie-profile/"
  
 # Función para filtrar archivos por idioma español (opcional)
 filter_spanish() {
@@ -25,14 +26,19 @@ wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 
 # Descargar la lista de archivos para BASE_URL3
 wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
 
+# Descargar la lista de archivos para BASE_URL3
+wget -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt
+
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list.txt
 cat temp_files/file_list_2.txt >> temp_files/file_list.txt
 cat temp_files/file_list_3.txt >> temp_files/file_list.txt
+cat temp_files/file_list_4.txt >> temp_files/file_list.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list.txt -o temp_files/file_list.txt
 sort -u temp_files/file_list_2.txt -o temp_files/file_list_2.txt
 sort -u temp_files/file_list_3.txt -o temp_files/file_list_3.txt
+sort -u temp_files/file_list_4.txt -o temp_files/file_list_4.txt
 
 # Función para descomprimir archivos .7z
 extract_7z() {
@@ -154,6 +160,8 @@ download_filtered_file() {
 
   if echo "$line" | grep -q '\.chd$'; then
     wget -P "../Roms/PS/" "$BASE_URL$line"
+  elif echo "$line" | grep -q '\.PBP$'; then
+    wget -P "../Roms/PS/" "$BASE_URL4$line"
   else
     if grep -q "$line" temp_files/file_list_2.txt; then
       wget -P "../Roms/PS/" "$BASE_URL2$line"
@@ -180,6 +188,8 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q '\.chd$'; then
         wget -P "../Roms/PS/" "$BASE_URL$line"
+      elif echo "$line" | grep -q '\.PBP$'; then
+        wget -P "../Roms/PS/" "$BASE_URL4$line"
       else
         if grep -q "$line" temp_files/file_list_2.txt; then
           wget -P "../Roms/PS/" "$BASE_URL2$line"
