@@ -159,6 +159,8 @@ download_filtered_file() {
       wget -P "../Roms/GBA/" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_gba_3.txt; then
       wget -P "../Roms/GBA/" "$BASE_URL3$line"
+    elif echo "$line" | grep -q -E '\.zip$'; then
+      wget -P "../Roms/GBA/" "$BASE_URL$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
