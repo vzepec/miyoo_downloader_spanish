@@ -43,35 +43,57 @@ check_for_updates() {
     exit 1
   fi
 
-  # Si el archivo no existe se deja la ultima version de develop
   if [ ! -f "$file_to_update" ]; then
-    echo "El archivo local no existe."
-    echo "Descargando el archivo..."
-
-    # Verificar si el directorio existe, si no, crearlo
-    if [ ! -d "$(dirname "$file_to_update")" ]; then
-      mkdir -p "$(dirname "$file_to_update")"
-    fi
-
+    echo "El archivo local no existe. Descargando el archivo..."
+    [ ! -d "$(dirname "$file_to_update")" ] && mkdir -p "$(dirname "$file_to_update")"
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo descargado y permisos aplicados."
-
-  # Si el archivo local es igual a la ultima version de develop
   elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya esta actualizado."
-
-  # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
+    echo "El archivo local ya está actualizado."
+    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualizacion disponible."
-    echo "Descargando el archivo actualizado..."
+    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo actualizado descargado y permisos aplicados."
   fi
- 
-  # Limpiar el archivo temporal si todavía existe
-  [ -f "$TEMP_FILE" ] && rm -f "$TEMP_FILE"
+}
+
+# Función para actualizar y reiniciar el script principal
+update_and_restart_main() {
+  local GITHUB_RAW_URL="$1"
+  echo "Buscando actualizaciones para $LOCAL_FILES_MAIN ..."
+
+  # Crear un archivo temporal
+  TEMP_FILE=$(mktemp)
+  if [ ! -f "$TEMP_FILE" ]; then
+    echo "No se pudo crear un archivo temporal."
+    exit 1
+  fi
+  curl -s -k -H "Authorization: token $TOKEN" --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RAW_URL" || {
+    echo "Error al descargar el archivo. Verifica la conexión y el token."
+    rm -f "$TEMP_FILE"
+    exit 1
+  }
+
+  if [ ! -s "$TEMP_FILE" ]; then
+    echo "El archivo descargado está vacío. Revisa la URL y el repositorio."
+    rm -f "$TEMP_FILE"
+    exit 1
+  fi
+
+  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE"; then
+    echo "El archivo local ya está actualizado."
+    rm -f "$TEMP_FILE"
+  else
+    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
+    mv "$TEMP_FILE" "$LOCAL_FILES_MAIN"
+    chmod +x "$LOCAL_FILES_MAIN"
+    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Reiniciando script..."
+    exec "$LOCAL_FILES_MAIN"
+  fi
 }
 
 # Función para decidir qué archivo .sh ejecutar
@@ -104,61 +126,36 @@ script() {
   case "$option" in
     1)
       clear
-      if [ -f "$LOCAL_FILES_NES" ]; then
-        script="$LOCAL_FILES_NES"
-      else
-        check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
-        script="$LOCAL_FILES_NES"
-      fi
+      [ ! -f "$LOCAL_FILES_NES" ] && check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+      script="$LOCAL_FILES_NES"
       ;;
-        2)
+    2)
       clear
-      if [ -f "$LOCAL_FILES_PSX" ]; then
-        script="$LOCAL_FILES_PSX"
-      else
-        check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
-        script="$LOCAL_FILES_PSX"
-      fi
+      [ ! -f "$LOCAL_FILES_PSX" ] && check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+      script="$LOCAL_FILES_PSX"
       ;;
-        3)
+    3)
       clear
-      if [ -f "$LOCAL_FILES_GB" ]; then
-        script="$LOCAL_FILES_GB"
-      else
-        check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
-        script="$LOCAL_FILES_GB"
-      fi
+      [ ! -f "$LOCAL_FILES_GB" ] && check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+      script="$LOCAL_FILES_GB"
       ;;
-        4)
+    4)
       clear
-      if [ -f "$LOCAL_FILES_GBA" ]; then
-        script="$LOCAL_FILES_GBA"
-      else
-        check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
-        script="$LOCAL_FILES_GBA"
-      fi
+      [ ! -f "$LOCAL_FILES_GBA" ] && check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+      script="$LOCAL_FILES_GBA"
       ;;
-        5)
+    5)
       clear
-      if [ -f "$LOCAL_FILES_GBC" ]; then
-        script="$LOCAL_FILES_GBC"
-      else
-        check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
-        script="$LOCAL_FILES_GBC"
-      fi
+      [ ! -f "$LOCAL_FILES_GBC" ] && check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+      script="$LOCAL_FILES_GBC"
       ;;
-        6)
+    6)
       clear
-      if [ -f "$LOCAL_FILES_SNES" ]; then
-        script="$LOCAL_FILES_SNES"
-      else
-        check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
-        script="$LOCAL_FILES_SNES"
-      fi
+      [ ! -f "$LOCAL_FILES_SNES" ] && check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      script="$LOCAL_FILES_SNES"
       ;;
     u)
       clear
-      check_for_updates "$LOCAL_FILES_MAIN" "$GITHUB_RAW_URLS_MAIN"
       check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
       check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
       check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
@@ -166,6 +163,7 @@ script() {
       check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
       check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
       check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      update_and_restart_main "$GITHUB_RAW_URLS_MAIN"
       ;;
     q)
       clear
