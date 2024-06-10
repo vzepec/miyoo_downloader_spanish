@@ -15,9 +15,9 @@ Los scripts descargadores muestan una lista paginada de roms disponibles, te per
 
 # Instalación y Ejecución 
 
-* Descarga el archivo [download_psx.sh](https://github.com/vzepec/miyoo_downloader_psx/blob/main/download_psx.sh).
+* Descarga el archivo [main.sh](https://github.com/vzepec/miyoo_downloader_spanish/blob/main/main.sh).
 * Conecta la micro SD de tu Miyoo a tu PC.
-* Crea una carpeta en la micro SD llamada `scripts` y deja el archivo `download_psx.sh` dentro.
+* Crea una carpeta en la micro SD llamada `scripts` y deja el archivo `main.sh` dentro.
 * Conecta la tarjeta micro SD a la Miyoo y abre la aplicación Terminal .
 * Navega a la carpeta `scripts` con el siguiente comando :
 ```bash
@@ -25,21 +25,26 @@ Los scripts descargadores muestan una lista paginada de roms disponibles, te per
 ```
 * Asigna permisos de ejecución con el siguiente comando (Solo la primera vez): 
 ```bash
-  chmod 755 download_psx.sh
+  chmod 755 main.sh
 ```
 
 * Ejecuta el archivo `download_psx.sh` con el siguiente comando:
 ```bash
-  ./download_psx.sh
+  ./main.sh
 ```
 # Uso y Actualización
 
-Cuando corras el archivo `main.sh` verás un selector de plataforma, debes escribir la letra correspondiente.
-Se verificá si existen cambios en comparación a la ultima version de la rama develop y en caso de existir, se descargará esa versión del script. Finalmente se ejecutará el script actualizado.
+Cuando corras el archivo `main.sh` verás un selector de plataformas, debes escribir el numero correspondiente y se ejecutará el script descargador de la plataforma seleccionada.
 Actualmente soporta las siguientes plataformas:
 
 - NES
 - PSX
+- GB
+- GBA
+- GBC
+- SNES
+
+Ademas, el archivo main.sh, dispone de una opcion para buscar actualizaciones de los scripts, si encuentra alguna actualizacion se descargara automaticamente.
 
 Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu con las roms paginadas donde puedes hacer lo siguiente:
 
@@ -48,6 +53,8 @@ Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu 
 - Descargar un archivo de juego escribiendo su número correspondiente. 
 
 - Buscar alguna coincidencia por palabra escribiendo `s`.
+  
+- Voler al selector de plataformas escribiendo `m`.
  
 - Cerrar el script escribiendo la letra `q` (Salir).
  
@@ -55,15 +62,13 @@ Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu 
 
 ## Mejoras futuras  🔥
 
-* Correcion de bugs cuando se busca por nombre. 
-* Compatibilidad con más plataformas.
+* Correccion de bugs.
+* Mas fuentes.
 
 ## Demo
 ![Run the script](20240523_234008.gif)
 
 ![Choose and download ](20240523_234039.gif)
-
-
 
 
 ## 🚀 Autor
