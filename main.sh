@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# GitHub API variables
-GITHUB_RAW_URLS_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
-GITHUB_RAW_URLS_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
-GITHUB_RAW_URLS_GB="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gb_spa.sh"
-GITHUB_RAW_URLS_GBA="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gba_spa.sh"
-GITHUB_RAW_URLS_GBC="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gbc_spa.sh"
-GITHUB_RAW_URLS_SNES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_snes_spa.sh"
-GITHUB_RAW_URLS_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+# URLs de las releases en GitHub
+GITHUB_RELEASE_URLS_NES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_nes_spa.sh"
+GITHUB_RELEASE_URLS_PSX="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_psx_spa.sh"
+GITHUB_RELEASE_URLS_GB="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gb_spa.sh"
+GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gba_spa.sh"
+GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gbc_spa.sh"
+GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_snes_spa.sh"
+GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/main.sh"
 
 LOCAL_FILES_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILES_PSX="downloaders/download_psx_spa.sh"
@@ -17,12 +17,10 @@ LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
 LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
 LOCAL_FILES_MAIN="main.sh"
 
-TOKEN="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"
-
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
   local file_to_update="$1"
-  local GITHUB_RAW_URL="$2"
+  local GITHUB_RELEASE_URL="$2"
   echo "Buscando actualizaciones para $file_to_update ..."
 
   # Crear un archivo temporal
@@ -31,8 +29,8 @@ check_for_updates() {
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
-  curl -s -k -H "Authorization: token $TOKEN" --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RAW_URL" || {
-    echo "Error al descargar el archivo. Verifica la conexion y el token."
+  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+    echo "Error al descargar el archivo. Verifica la conexion y la URL."
     rm -f "$TEMP_FILE"
     exit 1
   }
@@ -62,7 +60,7 @@ check_for_updates() {
 
 # Función para actualizar y reiniciar el script principal
 update_and_restart_main() {
-  local GITHUB_RAW_URL="$1"
+  local GITHUB_RELEASE_URL="$1"
   echo "Buscando actualizaciones para $LOCAL_FILES_MAIN ..."
 
   # Crear un archivo temporal
@@ -71,8 +69,8 @@ update_and_restart_main() {
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
-  curl -s -k -H "Authorization: token $TOKEN" --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RAW_URL" || {
-    echo "Error al descargar el archivo. Verifica la conexión y el token."
+  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+    echo "Error al descargar el archivo. Verifica la conexión y la URL."
     rm -f "$TEMP_FILE"
     exit 1
   }
@@ -126,44 +124,43 @@ script() {
   case "$option" in
     1)
       clear
-      [ ! -f "$LOCAL_FILES_NES" ] && check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
+      [ ! -f "$LOCAL_FILES_NES" ] && check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
       script="$LOCAL_FILES_NES"
       ;;
     2)
       clear
-      [ ! -f "$LOCAL_FILES_PSX" ] && check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
+      [ ! -f "$LOCAL_FILES_PSX" ] && check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
       script="$LOCAL_FILES_PSX"
       ;;
     3)
       clear
-      [ ! -f "$LOCAL_FILES_GB" ] && check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
+      [ ! -f "$LOCAL_FILES_GB" ] && check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
       script="$LOCAL_FILES_GB"
       ;;
     4)
       clear
-      [ ! -f "$LOCAL_FILES_GBA" ] && check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
+      [ ! -f "$LOCAL_FILES_GBA" ] && check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RELEASE_URLS_GBA"
       script="$LOCAL_FILES_GBA"
       ;;
     5)
       clear
-      [ ! -f "$LOCAL_FILES_GBC" ] && check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
+      [ ! -f "$LOCAL_FILES_GBC" ] && check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RELEASE_URLS_GBC"
       script="$LOCAL_FILES_GBC"
       ;;
     6)
       clear
-      [ ! -f "$LOCAL_FILES_SNES" ] && check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      [ ! -f "$LOCAL_FILES_SNES" ] && check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
       script="$LOCAL_FILES_SNES"
       ;;
     u)
       clear
-      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
-      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
-      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
-      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
-      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
-      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
-      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
-      update_and_restart_main "$GITHUB_RAW_URLS_MAIN"
+      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
+      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RELEASE_URLS_GBC"
+      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RELEASE_URLS_GBA"
+      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
+      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
+      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
+      update_and_restart_main "$GITHUB_RELEASE_URLS_MAIN"
       ;;
     q)
       clear
