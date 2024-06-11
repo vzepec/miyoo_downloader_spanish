@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# Version del script
+version="v1.0.0"
+
 # Obtiene la ultima version
-latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$')
+latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | jq -r '.tag_name')
 
 # URLs de las releases en GitHub
 GITHUB_RELEASE_URLS_NES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_nes_spa.sh"
@@ -22,7 +25,7 @@ LOCAL_FILES_MAIN="main.sh"
 
 
 
-# Función para verificar si hay cambios en el archivo
+# Funcion para verificar si hay cambios en el archivo
 check_for_updates() {
   local file_to_update="$1"
   local GITHUB_RELEASE_URL="$2"
@@ -52,18 +55,15 @@ check_for_updates() {
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo descargado y permisos aplicados."
-  elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya está actualizado."
-    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
-    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Archivo actualizado"
   fi
+  rm -f "$TEMP_FILE"
 }
 
-# Función para actualizar y reiniciar el script principal
+# Funcion para actualizar y reiniciar el script principal
 update_and_restart_main() {
   local GITHUB_RELEASE_URL="$1"
   echo "Buscando actualizaciones para $LOCAL_FILES_MAIN ..."
@@ -75,38 +75,32 @@ update_and_restart_main() {
     exit 1
   fi
   wget -q --timeout=10 -O "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
-    echo "Error al descargar el archivo. Verifica la conexión y la URL."
+    echo "Error al descargar el archivo. Verifica la conexion y la URL."
     rm -f "$TEMP_FILE"
     exit 1
   }
 
   if [ ! -s "$TEMP_FILE" ];then
-    echo "El archivo descargado está vacío. Revisa la URL y el repositorio."
-    rm -f "$TEMP_FILE"
+    echo "El archivo descargado esta vacio. Revisa la URL y el repositorio."
     exit 1
-  fi
-
-  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE";then
-    echo "El archivo local ya está actualizado."
-    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$LOCAL_FILES_MAIN"
     chmod +x "$LOCAL_FILES_MAIN"
-    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Archivo actualizado"
     echo "Reiniciando script..."
     exec "$(pwd)/$LOCAL_FILES_MAIN"
   fi
+  rm -f "$TEMP_FILE"
 }
 
-# Función para decidir qué archivo .sh ejecutar
+# Funcion para decidir qué archivo .sh ejecutar
 script() {
   clear
   echo ""
   echo "___ _______________________________ ________ "
   echo "|  \|___[__ |   |__||__/| __|__||  \|  ||__/ "
   echo "|__/|______]|___|  ||  \|__]|  ||__/|__||  \ "
-  echo "                                             "
+  echo "                                             $version"
   echo "Seleccione Plataforma:"
   echo "------------------------------"
   echo ""
@@ -182,5 +176,5 @@ script() {
   return
 }
 
-# Llamar a la función para decidir qué archivo .sh ejecutar
+# Llamar a la funcion para decidir qué archivo .sh ejecutar
 script
