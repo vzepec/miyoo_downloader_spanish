@@ -3,7 +3,7 @@
 
 Esto es un proyecto de scripts `sh` que permiten descargar archivos roms en español de distintas plataformas desde Internet Archive. Aunque principalmente está pensado para ser ejecutado en la consola Miyoo Mini Plus, tambien puede ejecutarse en algunos sistemas Linux.
 
-El proyecto contiene un archivo principal `main.sh` que se usa para descargar y actualizar los scripts descargadores de roms a la ultima version release disponible. 
+El proyecto contiene un archivo principal `main.sh` que se usa para descargar y actualizar los scripts a la ultima version release disponible. 
 
 Los scripts descargadores muestan una lista paginada de roms disponibles, te permite descargar los que elijas y almacenarlos en `../Roms/[Plataforma]`.
 
