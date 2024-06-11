@@ -44,7 +44,10 @@ Actualmente soporta las siguientes plataformas:
 - GBC
 - SNES
 
-Ademas, el archivo main.sh, dispone de una opcion para buscar actualizaciones de los scripts, si encuentra alguna actualizacion se descargara automaticamente.
+Ademas, el archivo main.sh, dispone de una opcion para buscar actualizaciones de los scripts manualmente.
+
+*Cuando ejecutes por primera vez el archivo `main.sh` se recomienda seleccionar la opcion de `Actualizar Scripts` (presionando la tecla `u`) para que se descarguen automaticamente los archivos faltantes.*
+
 
 Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu con las roms paginadas donde puedes hacer lo siguiente:
 
