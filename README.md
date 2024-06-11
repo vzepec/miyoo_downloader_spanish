@@ -66,9 +66,9 @@ Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu 
 * Mas fuentes.
 
 ## Demo
-![Run the script](20240523_234008.gif)
+![Run the script](/Gifs/GIF_1.gif)
 
-![Choose and download ](20240523_234039.gif)
+![Choose and download ](/Gifs/GIF_2.gif)
 
 
 ## 🚀 Autor
