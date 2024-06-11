@@ -33,11 +33,11 @@ extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/FC"
   
-  # Validar si hay archivos o directorios sin la extension .smc o .sfc
-  local invalid_files=$(find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*")
+  # Validar si hay archivos o directorios sin la extension .nes o .NES
+  local invalid_files=$(find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -a ! -path "../Roms/FC/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*" -type f -delete
-    find "../Roms/FC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/FC/Imgs/*" -type d -delete
+    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -a ! -path "../Roms/FC/Imgs/*" -type f -delete
+    find "../Roms/FC" ! -name "*.nes" ! -name "*.NES" -a ! -path "../Roms/FC/Imgs/*" -type d -delete
   fi
 }
 

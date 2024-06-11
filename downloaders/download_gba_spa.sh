@@ -11,7 +11,7 @@ BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-g
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(gba\|GBA\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba.txt
+wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(gba\|GBA\|zip\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba.txt
 
 # Descargar la lista de archivos para BASE_URL2
 wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_2.txt
@@ -33,11 +33,11 @@ extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GBA"
   
-  # Validar si hay archivos o directorios sin la extension .smc o .sfc
-  local invalid_files=$(find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*")
+  # Validar si hay archivos o directorios sin la extension .gba o .GBA
+  local invalid_files=$(find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -a ! -path "../Roms/GBA/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type f -delete
-    find "../Roms/GBA" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBA/Imgs/*" -type d -delete
+    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -a ! -path "../Roms/GBA/Imgs/*" -type f -delete
+    find "../Roms/GBA" ! -name "*.gba" ! -name "*.GBA" -a ! -path "../Roms/GBA/Imgs/*" -type d -delete
   fi
 }
 
@@ -159,6 +159,8 @@ download_filtered_file() {
       wget -P "../Roms/GBA/" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_gba_3.txt; then
       wget -P "../Roms/GBA/" "$BASE_URL3$line"
+    elif echo "$line" | grep -q -E '\.zip$'; then
+      wget -P "../Roms/GBA/" "$BASE_URL$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -181,11 +183,13 @@ download_file() {
       if echo "$line" | grep -q -E '\.gba$|\.GBA$'; then
         wget -P "../Roms/GBA/" "$BASE_URL$line"
       else
-        if grep -q "$line" temp_files/file_list_gba_2.txt; then
-          wget -P "../Roms/GBA/" "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_gba_3.txt; then
-          wget -P "../Roms/GBA/" "$BASE_URL3$line"
-        fi
+          if grep -q "$line" temp_files/file_list_gba_2.txt; then
+            wget -P "../Roms/GBA/" "$BASE_URL2$line"
+          elif grep -q "$line" temp_files/file_list_gba_3.txt; then
+            wget -P "../Roms/GBA/" "$BASE_URL3$line"
+          elif echo "$line" | grep -q -E '\.zip$'; then
+            wget -P "../Roms/GBA/" "$BASE_URL$line"
+          fi
       fi
       file_name=$(perform_substitution "$line")
       mv "../Roms/GBA/$line" "../Roms/GBA/$file_name"

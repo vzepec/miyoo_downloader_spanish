@@ -33,11 +33,11 @@ extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/GBC"
   
-  # Validar si hay archivos o directorios sin la extension .smc o .sfc
-  local invalid_files=$(find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*")
+  # Validar si hay archivos o directorios sin la extension .gbc o .GBC
+  local invalid_files=$(find "../Roms/GBC" ! -name "*.gbc" ! -name "*.GBC" -a ! -path "../Roms/GBC/Imgs/*")
   if [ -n "$invalid_files" ]; then
-    find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*" -type f -delete
-    find "../Roms/GBC" ! -name "*.smc" ! -name "*.sfc" -a ! -path "../Roms/GBC/Imgs/*" -type d -delete
+    find "../Roms/GBC" ! -name "*.gbc" ! -name "*.GBC" -a ! -path "../Roms/GBC/Imgs/*" -type f -delete
+    find "../Roms/GBC" ! -name "*.gbc" ! -name "*.GBC" -a ! -path "../Roms/GBC/Imgs/*" -type d -delete
   fi
 }
 

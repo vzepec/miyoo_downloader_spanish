@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# GitHub API variables
-GITHUB_RAW_URLS_NES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_nes_spa.sh"
-GITHUB_RAW_URLS_PSX="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_psx_spa.sh"
-GITHUB_RAW_URLS_GB="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gb_spa.sh"
-GITHUB_RAW_URLS_GBA="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gba_spa.sh"
-GITHUB_RAW_URLS_GBC="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_gbc_spa.sh"
-GITHUB_RAW_URLS_SNES="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/downloaders/download_snes_spa.sh"
-GITHUB_RAW_URLS_MAIN="https://raw.githubusercontent.com/vzepec/miyoo_downloader_spanish/develop/main.sh"
+# URLs de las releases en GitHub
+GITHUB_RELEASE_URLS_NES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_nes_spa.sh"
+GITHUB_RELEASE_URLS_PSX="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_psx_spa.sh"
+GITHUB_RELEASE_URLS_GB="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gb_spa.sh"
+GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gba_spa.sh"
+GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gbc_spa.sh"
+GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_snes_spa.sh"
+GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/main.sh"
 
 LOCAL_FILES_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILES_PSX="downloaders/download_psx_spa.sh"
@@ -17,12 +17,10 @@ LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
 LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
 LOCAL_FILES_MAIN="main.sh"
 
-TOKEN="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"
-
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
   local file_to_update="$1"
-  local GITHUB_RAW_URL="$2"
+  local GITHUB_RELEASE_URL="$2"
   echo "Buscando actualizaciones para $file_to_update ..."
 
   # Crear un archivo temporal
@@ -31,8 +29,8 @@ check_for_updates() {
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
-  curl -s -k -H "Authorization: token $TOKEN" --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RAW_URL" || {
-    echo "Error al descargar el archivo. Verifica la conexion y el token."
+  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+    echo "Error al descargar el archivo. Verifica la conexion y la URL."
     rm -f "$TEMP_FILE"
     exit 1
   }
@@ -43,35 +41,57 @@ check_for_updates() {
     exit 1
   fi
 
-  # Si el archivo no existe se deja la ultima version de develop
   if [ ! -f "$file_to_update" ]; then
-    echo "El archivo local no existe."
-    echo "Descargando el archivo..."
-
-    # Verificar si el directorio existe, si no, crearlo
-    if [ ! -d "$(dirname "$file_to_update")" ]; then
-      mkdir -p "$(dirname "$file_to_update")"
-    fi
-
+    echo "El archivo local no existe. Descargando el archivo..."
+    [ ! -d "$(dirname "$file_to_update")" ] && mkdir -p "$(dirname "$file_to_update")"
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo descargado y permisos aplicados."
-
-  # Si el archivo local es igual a la ultima version de develop
   elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya esta actualizado."
-
-  # Si el archivo local existe y no es igual a la ultima version de develop, se reemplaza
+    echo "El archivo local ya está actualizado."
+    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualizacion disponible."
-    echo "Descargando el archivo actualizado..."
+    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo actualizado descargado y permisos aplicados."
   fi
- 
-  # Limpiar el archivo temporal si todavía existe
-  [ -f "$TEMP_FILE" ] && rm -f "$TEMP_FILE"
+}
+
+# Función para actualizar y reiniciar el script principal
+update_and_restart_main() {
+  local GITHUB_RELEASE_URL="$1"
+  echo "Buscando actualizaciones para $LOCAL_FILES_MAIN ..."
+
+  # Crear un archivo temporal
+  TEMP_FILE=$(mktemp)
+  if [ ! -f "$TEMP_FILE" ];then
+    echo "No se pudo crear un archivo temporal."
+    exit 1
+  fi
+  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+    echo "Error al descargar el archivo. Verifica la conexión y la URL."
+    rm -f "$TEMP_FILE"
+    exit 1
+  }
+
+  if [ ! -s "$TEMP_FILE" ];then
+    echo "El archivo descargado está vacío. Revisa la URL y el repositorio."
+    rm -f "$TEMP_FILE"
+    exit 1
+  fi
+
+  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE";then
+    echo "El archivo local ya está actualizado."
+    rm -f "$TEMP_FILE"
+  else
+    echo "Hay una actualización disponible. Descargando el archivo actualizado..."
+    mv "$TEMP_FILE" "$LOCAL_FILES_MAIN"
+    chmod +x "$LOCAL_FILES_MAIN"
+    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Reiniciando script..."
+    exec "$(pwd)/$LOCAL_FILES_MAIN"
+  fi
 }
 
 # Función para decidir qué archivo .sh ejecutar
@@ -104,38 +124,43 @@ script() {
   case "$option" in
     1)
       clear
+      [ ! -f "$LOCAL_FILES_NES" ] && check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
       script="$LOCAL_FILES_NES"
       ;;
     2)
       clear
+      [ ! -f "$LOCAL_FILES_PSX" ] && check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
       script="$LOCAL_FILES_PSX"
       ;;
     3)
       clear
+      [ ! -f "$LOCAL_FILES_GB" ] && check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
       script="$LOCAL_FILES_GB"
       ;;
     4)
       clear
+      [ ! -f "$LOCAL_FILES_GBA" ] && check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RELEASE_URLS_GBA"
       script="$LOCAL_FILES_GBA"
       ;;
     5)
       clear
+      [ ! -f "$LOCAL_FILES_GBC" ] && check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RELEASE_URLS_GBC"
       script="$LOCAL_FILES_GBC"
       ;;
     6)
       clear
+      [ ! -f "$LOCAL_FILES_SNES" ] && check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
       script="$LOCAL_FILES_SNES"
       ;;
     u)
       clear
-      check_for_updates "$LOCAL_FILES_MAIN" "$GITHUB_RAW_URLS_MAIN"
-      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
-      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RAW_URLS_GBC"
-      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RAW_URLS_GBA"
-      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RAW_URLS_GB"
-      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RAW_URLS_PSX"
-      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RAW_URLS_NES"
-      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RAW_URLS_SNES"
+      check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
+      check_for_updates "$LOCAL_FILES_GBC" "$GITHUB_RELEASE_URLS_GBC"
+      check_for_updates "$LOCAL_FILES_GBA" "$GITHUB_RELEASE_URLS_GBA"
+      check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
+      check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
+      check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
+      update_and_restart_main "$GITHUB_RELEASE_URLS_MAIN"
       ;;
     q)
       clear
