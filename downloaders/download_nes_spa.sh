@@ -228,6 +228,7 @@ while true; do
       break
       ;;
     m)
+      clear
       echo "Regresando al menu principal..."
       rm -rf temp_files
       ./main.sh
