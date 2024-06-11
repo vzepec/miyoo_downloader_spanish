@@ -66,9 +66,14 @@ Una vez se ejecute el script de la plataforma seleccionada , aparecerá un menu 
 * Mas fuentes.
 
 ## Demo
-![Run the script](/Gifs/GIF_1.gif)
 
-![Choose and download ](/Gifs/GIF_2.gif)
+<div align="center">
+  <img src="/Gifs/GIF_1.gif" alt="Run the script">
+</div>
+
+<div align="center">
+  <img src="/Gifs/GIF_2.gif" alt="Choose and download">
+</div>
 
 
 ## 🚀 Autor
