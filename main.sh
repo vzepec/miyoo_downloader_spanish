@@ -1,13 +1,16 @@
 #!/bin/sh
 
+# Obtiene la ultima version
+latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$')
+
 # URLs de las releases en GitHub
-GITHUB_RELEASE_URLS_NES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_nes_spa.sh"
-GITHUB_RELEASE_URLS_PSX="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_psx_spa.sh"
-GITHUB_RELEASE_URLS_GB="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gb_spa.sh"
-GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gba_spa.sh"
-GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_gbc_spa.sh"
-GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/download_snes_spa.sh"
-GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.0/main.sh"
+GITHUB_RELEASE_URLS_NES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_nes_spa.sh"
+GITHUB_RELEASE_URLS_PSX="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_psx_spa.sh"
+GITHUB_RELEASE_URLS_GB="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gb_spa.sh"
+GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gba_spa.sh"
+GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gbc_spa.sh"
+GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_snes_spa.sh"
+GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/main.sh"
 
 LOCAL_FILES_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILES_PSX="downloaders/download_psx_spa.sh"
@@ -16,6 +19,8 @@ LOCAL_FILES_GBA="downloaders/download_gba_spa.sh"
 LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
 LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
 LOCAL_FILES_MAIN="main.sh"
+
+
 
 # Función para verificar si hay cambios en el archivo
 check_for_updates() {
@@ -29,7 +34,7 @@ check_for_updates() {
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
-  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+  wget -q --timeout=10 -O "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
     echo "Error al descargar el archivo. Verifica la conexion y la URL."
     rm -f "$TEMP_FILE"
     exit 1
@@ -69,7 +74,7 @@ update_and_restart_main() {
     echo "No se pudo crear un archivo temporal."
     exit 1
   fi
-  curl -L -s --connect-timeout 10 -f -o "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
+  wget -q --timeout=10 -O "$TEMP_FILE" "$GITHUB_RELEASE_URL" || {
     echo "Error al descargar el archivo. Verifica la conexión y la URL."
     rm -f "$TEMP_FILE"
     exit 1
