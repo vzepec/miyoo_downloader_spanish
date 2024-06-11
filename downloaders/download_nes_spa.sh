@@ -27,8 +27,8 @@ sort -u temp_files/file_list_nes.txt -o temp_files/file_list_nes.txt
 sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
 sort -u temp_files/file_list_nes_3.txt -o temp_files/file_list_nes_3.txt
 
-# Función para descomprimir archivos .zip
-# Función para descomprimir archivos .zip
+# Funcion para descomprimir archivos .zip
+# Funcion para descomprimir archivos .zip
 extract_zip() {
   local file="$1"
   unzip "$file" -d "../Roms/FC"
@@ -41,12 +41,12 @@ extract_zip() {
   fi
 }
 
-# Función para realizar la sustitución
+# Funcion para realizar la sustitucion
 perform_substitution() {
-  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/í/g' -e 's/%C3%B3/ó/g' -e 's/%C3%A9/e/g' -e 's/%C3%B1/n/g'
+  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/i/g' -e 's/%C3%B3/o/g' -e 's/%C3%A9/e/g' -e 's/%C3%B1/n/g'
 }
 
-# Función para mostrar una página de archivos
+# Funcion para mostrar una pagina de archivos
 show_page() {
   clear
   local page="$1"
@@ -80,7 +80,7 @@ show_page() {
 search_file() {
   echo -n "Escribe el juego a buscar > "
   read -r search_name
-  # Convertir la cadena de búsqueda en una expresión regular
+  # Convertir la cadena de busqueda en una expresion regular
   local search_regex=$(echo "$search_name" | sed 's/ /.* /g')
   grep -i -E "$search_regex" temp_files/file_list_nes.txt > temp_files/search_results.txt
   local total_results=$(wc -l < temp_files/search_results.txt)
@@ -122,7 +122,7 @@ paginate_search_results() {
   read -p "Opcion > " choice
   if echo "$choice" | grep -q '^[0-9]\+$'; then
     index=$((choice - 1))
-    file_to_download=$(sed -n "$((index + 1))p" temp_files/search_results.txt)  # Ajuste para obtener la línea correcta
+    file_to_download=$(sed -n "$((index + 1))p" temp_files/search_results.txt)  # Ajuste para obtener la linea correcta
     echo "Descargando $file_to_download..."
     download_filtered_file "$file_to_download"
   elif [ "$choice" = "n" ]; then
@@ -147,7 +147,7 @@ paginate_search_results() {
   fi
 }
 
-# Función para descargar el archivo filtrado seleccionado
+# Funcion para descargar el archivo filtrado seleccionado
 download_filtered_file() {
   local line="$1"
   local file_name
@@ -169,7 +169,7 @@ download_filtered_file() {
   echo "Descarga completa: ../Roms/FC/$file_name"
 }
 
-# Función para descargar el archivo seleccionado (corregida)
+# Funcion para descargar el archivo seleccionado (corregida)
 download_file() {
   local index="$1"
   local i=0
@@ -228,13 +228,13 @@ while true; do
       break
       ;;
     m)
-      echo "Regresando al menú principal..."
+      echo "Regresando al menu principal..."
       rm -rf temp_files
       ./main.sh
       break
       ;;
     ''|*[!0-9]*)
-      echo "Opción inválida."
+      echo "Opcion invalida."
       ;;
     *)
       index=$((choice - 1))
