@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Version del script
+version="v1.0.0"
+
 # Obtiene la ultima version
 latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | jq -r '.tag_name')
 
@@ -106,7 +109,7 @@ script() {
   echo "___ _______________________________ ________ "
   echo "|  \|___[__ |   |__||__/| __|__||  \|  ||__/ "
   echo "|__/|______]|___|  ||  \|__]|  ||__/|__||  \ "
-  echo "                                             v1.0.0"
+  echo "                                             $version"
   echo "Seleccione Plataforma:"
   echo "------------------------------"
   echo ""
