@@ -28,7 +28,7 @@ Los scripts descargadores muestan una lista paginada de roms disponibles, te per
   chmod 755 main.sh
 ```
 
-* Ejecuta el archivo `download_psx.sh` con el siguiente comando:
+* Ejecuta el archivo `main.sh` con el siguiente comando:
 ```bash
   ./main.sh
 ```
