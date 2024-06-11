@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version del script
-version="v1.0.0"
+version="v1.0.1"
 
 # Obtiene la ultima version
 latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | jq -r '.tag_name')
