@@ -55,15 +55,12 @@ check_for_updates() {
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
     echo "Archivo descargado y permisos aplicados."
-  elif cmp -s "$file_to_update" "$TEMP_FILE"; then
-    echo "El archivo local ya esta actualizado."
-    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualizacion disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
-    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Archivo actualizado"
   fi
+  rm -f "$TEMP_FILE"
 }
 
 # Funcion para actualizar y reiniciar el script principal
@@ -85,21 +82,15 @@ update_and_restart_main() {
 
   if [ ! -s "$TEMP_FILE" ];then
     echo "El archivo descargado esta vacio. Revisa la URL y el repositorio."
-    rm -f "$TEMP_FILE"
     exit 1
-  fi
-
-  if cmp -s "$LOCAL_FILES_MAIN" "$TEMP_FILE";then
-    echo "El archivo local ya esta actualizado."
-    rm -f "$TEMP_FILE"
   else
-    echo "Hay una actualizacion disponible. Descargando el archivo actualizado..."
     mv "$TEMP_FILE" "$LOCAL_FILES_MAIN"
     chmod +x "$LOCAL_FILES_MAIN"
-    echo "Archivo actualizado descargado y permisos aplicados."
+    echo "Archivo actualizado"
     echo "Reiniciando script..."
     exec "$(pwd)/$LOCAL_FILES_MAIN"
   fi
+  rm -f "$TEMP_FILE"
 }
 
 # Funcion para decidir qué archivo .sh ejecutar
