@@ -54,10 +54,12 @@ check_for_updates() {
     [ ! -d "$(dirname "$file_to_update")" ] && mkdir -p "$(dirname "$file_to_update")"
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
+    dos2unix "$file_to_update"
     echo "Archivo descargado y permisos aplicados."
   else
     mv "$TEMP_FILE" "$file_to_update"
     chmod +x "$file_to_update"
+    dos2unix "$file_to_update"
     echo "Archivo actualizado"
   fi
   rm -f "$TEMP_FILE"
