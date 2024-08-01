@@ -26,7 +26,7 @@ wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed
 wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget --limit-rate=0 --tries=3 -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
+wget -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
 filter_spanish "temp_files/file_list_nes_4.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_nes.txt
