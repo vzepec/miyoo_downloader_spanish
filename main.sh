@@ -86,6 +86,7 @@ update_and_restart_main() {
   else
     mv "$TEMP_FILE" "$LOCAL_FILES_MAIN"
     chmod +x "$LOCAL_FILES_MAIN"
+    dos2unix "$LOCAL_FILES_MAIN"
     echo "Archivo actualizado"
     echo "Reiniciando script..."
     exec "$(pwd)/$LOCAL_FILES_MAIN"
