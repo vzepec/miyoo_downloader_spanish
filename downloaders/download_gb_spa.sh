@@ -4,7 +4,14 @@
 BASE_URL="https://archive.org/download/pokemon-edicion-roja-gb-roms-nintendo-en-espanol/"
 BASE_URL2="https://archive.org/download/gb-compilacion-de-traducciones-en-espanol_202404/"
 BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-gb/"
+BASE_URL4="https://archive.org/download/CentralArquivista-GameBoy/"
 
+# Funcion para filtrar archivos por idioma español (opcional)
+filter_spanish() {
+  local file_to_filter="$1"
+  grep -i -e "EU%29.gb" -e "Es%2C" -e "%28EU%29" -e "%28Es%29" "$file_to_filter" > temp_files/file_list_filtered.txt
+  mv temp_files/file_list_filtered.txt  $file_to_filter
+}
 
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
@@ -18,9 +25,14 @@ wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed
 # Descargar la lista de archivos para BASE_URL3
 wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gb_3.txt
 
+# Descargar la lista de archivos para BASE_URL4
+wget --limit-rate=0 --tries=3 -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.\(gb\|GB\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gb_4.txt 
+filter_spanish "temp_files/file_list_gb_4.txt"
+
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_gb.txt
 cat temp_files/file_list_gb_2.txt >> temp_files/file_list_gb.txt
 cat temp_files/file_list_gb_3.txt >> temp_files/file_list_gb.txt
+cat temp_files/file_list_gb_4.txt >> temp_files/file_list_gb.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_gb.txt -o temp_files/file_list_gb.txt
@@ -152,19 +164,23 @@ download_filtered_file() {
   local file_name
 
   if echo "$line" | grep -q -E '\.gb$|\.GB$'; then
-    wget -P "../Roms/GB/" "$BASE_URL$line"
-  else
-    if grep -q "$line" temp_files/file_list_gb_2.txt; then
-      wget -P "../Roms/GB/" "$BASE_URL2$line"
-    elif grep -q "$line" temp_files/file_list_gb_3.txt; then
-      wget -P "../Roms/GB/" "$BASE_URL3$line"
+    if grep -q "$line" temp_files/file_list_gb_4.txt; then
+        wget -P "../Roms/GB/" "$BASE_URL4$line"
+    else
+        wget -P "../Roms/GB/" "$BASE_URL$line"
     fi
+  else
+      if grep -q "$line" temp_files/file_list_gb_2.txt; then
+        wget -P "../Roms/GB/" "$BASE_URL2$line"
+      elif grep -q "$line" temp_files/file_list_gb_3.txt; then
+        wget -P "../Roms/GB/" "$BASE_URL3$line"
+      fi
   fi
-  file_name=$(perform_substitution "$line")
-  mv "../Roms/GB/$line" "../Roms/GB/$file_name"
-  if echo "$line" | grep -q '\.zip$'; then
-    extract_zip "../Roms/GB/$file_name"
-  fi
+    file_name=$(perform_substitution "$line")
+    mv "../Roms/GB/$line" "../Roms/GB/$file_name"
+    if echo "$line" | grep -q '\.zip$'; then
+      extract_zip "../Roms/GB/$file_name"
+    fi
   echo "Descarga completa: ../Roms/GB/$file_name"
 }
 
@@ -178,13 +194,17 @@ download_file() {
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.gb$|\.GB$'; then
-        wget -P "../Roms/GB/" "$BASE_URL$line"
-      else
-        if grep -q "$line" temp_files/file_list_gb_2.txt; then
-          wget -P "../Roms/GB/" "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_gb_3.txt; then
-          wget -P "../Roms/GB/" "$BASE_URL3$line"
+        if grep -q "$line" temp_files/file_list_gb_4.txt; then
+            wget -P "../Roms/GB/" "$BASE_URL4$line"
+        else
+            wget -P "../Roms/GB/" "$BASE_URL$line"
         fi
+      else
+          if grep -q "$line" temp_files/file_list_gb_2.txt; then
+            wget -P "../Roms/GB/" "$BASE_URL2$line"
+          elif grep -q "$line" temp_files/file_list_gb_3.txt; then
+            wget -P "../Roms/GB/" "$BASE_URL3$line"
+          fi
       fi
       file_name=$(perform_substitution "$line")
       mv "../Roms/GB/$line" "../Roms/GB/$file_name"
