@@ -4,7 +4,14 @@
 BASE_URL="https://archive.org/download/kirbys-adventure-nes-roms-nintendo-en-espanol/"
 BASE_URL2="https://archive.org/download/nes-compilacion-de-traducciones-en-espanol_202404/"
 BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-nes/"
+BASE_URL4="https://archive.org/download/CentralArquivista-Nintendo/"
 
+# Funcion para filtrar archivos por idioma español (opcional)
+filter_spanish() {
+  local file_to_filter="$1"
+  grep -i -e "EU%29.nes" -e "EU%20-" -e "%28EU%29" -e "%28Es%29" "$file_to_filter" > temp_files/file_list_filtered.txt
+  mv temp_files/file_list_filtered.txt  $file_to_filter
+}
 
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
@@ -18,14 +25,20 @@ wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed
 # Descargar la lista de archivos para BASE_URL3
 wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
 
+# Descargar la lista de archivos para BASE_URL3
+wget --limit-rate=0 --tries=3 -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
+filter_spanish "temp_files/file_list_nes_4.txt"
+
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_nes.txt
 cat temp_files/file_list_nes_2.txt >> temp_files/file_list_nes.txt
 cat temp_files/file_list_nes_3.txt >> temp_files/file_list_nes.txt
+cat temp_files/file_list_nes_4.txt >> temp_files/file_list_nes.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_nes.txt -o temp_files/file_list_nes.txt
 sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
 sort -u temp_files/file_list_nes_3.txt -o temp_files/file_list_nes_3.txt
+sort -u temp_files/file_list_nes_4.txt -o temp_files/file_list_nes_4.txt
 
 # Funcion para descomprimir archivos .zip
 # Funcion para descomprimir archivos .zip
@@ -153,7 +166,11 @@ download_filtered_file() {
   local file_name
 
   if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
-    wget -P "../Roms/FC/" "$BASE_URL$line"
+    if grep -q "$line" temp_files/file_list_nes_4.txt; then
+      wget -P "../Roms/FC/" "$BASE_URL4$line"
+    else
+      wget -P "../Roms/FC/" "$BASE_URL$line"
+    fi
   else
     if grep -q "$line" temp_files/file_list_nes_2.txt; then
       wget -P "../Roms/FC/" "$BASE_URL2$line"
@@ -179,7 +196,11 @@ download_file() {
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
-        wget -P "../Roms/FC/" "$BASE_URL$line"
+        if grep -q "$line" temp_files/file_list_nes_4.txt; then
+          wget -P "../Roms/FC/" "$BASE_URL4$line"
+        else
+          wget -P "../Roms/FC/" "$BASE_URL$line"
+        fi
       else
         if grep -q "$line" temp_files/file_list_nes_2.txt; then
           wget -P "../Roms/FC/" "$BASE_URL2$line"
