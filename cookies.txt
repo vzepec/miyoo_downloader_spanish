@@ -1,0 +1,10 @@
+# HTTP cookie file.
+# Domain  | Include subdomains | Path | Secure | Expiration | Name | Value
+.archive.org	TRUE	/	FALSE	0	test-cookie	1
+.archive.org	TRUE	/	FALSE	0	donation	x
+.archive.org	TRUE	/	FALSE	0	ia-auth	585f345583f1fcc8b5e2302187f91d80
+.archive.org	TRUE	/	FALSE	0	donation-identifier	8968124b7147ab3aaab9052693d91fe7
+.archive.org	TRUE	/	FALSE	0	abtest-identifier	7cac523259651c3df2c42b46776a6348
+.archive.org	TRUE	/	FALSE	0	PHPSESSID	v5e1rcdcll9q9o98ujrr7akh5f
+.archive.org	TRUE	/	FALSE	0	logged-in-sig	1764125583%201732589583%20OYU1j4XAsMz5wa7PNoxXh%2FCSUAnn8JgTy0hzpSKJCcaUignkfBwfjLKfXmPyo7oSrrQMkxfddxzHnXohsjwrNyiaUkWDZso4qDawbwvTew40rjYA%2F13am1cza9H98kvqIyeUecclhevGj8Llxdxo4RFrpGQCMr7Z4Uj%2FLNv%2Fxoy68nLNb%2BVZ5inssux45odM3PYIrPRimWtw%2Fb4cSf%2FV5VBkivJiHyNY9Q6aJiuGExMxXL6QxXt6pQqHZtcdDoVhVD25uahRdu7euL6KIpNT29rwACnHopeuYxVHJqzO0rBal3iMdbpB5nf%2BRqPEhmURHTOyw%2BOlE6CsDvRlXrHIkw%3D%3D
+.archive.org	TRUE	/	FALSE	0	logged-in-user	lepero3343%40merotx.com

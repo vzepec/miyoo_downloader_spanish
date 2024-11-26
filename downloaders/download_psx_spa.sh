@@ -18,20 +18,20 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt
+wget --load-cookies="$COOKIES_FILE"  -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt
 filter_spanish "temp_files/file_list.txt"
 
 # Descargar la lista de archivos para BASE_URL2
-wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt
 
 # Descargar la lista de archivos para BASE_URL5
-wget  -q -O - "$BASE_URL5" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_5.txt 
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL5" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_5.txt 
 filter_spanish "temp_files/file_list_5.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list.txt
@@ -167,17 +167,17 @@ download_filtered_file() {
 
   if echo "$line" | grep -q '\.chd$'; then
     if grep -q "$line" temp_files/file_list_5.txt; then
-      wget -P "../Roms/PS/" "$BASE_URL5$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL5$line"
     else
-      wget -P "../Roms/PS/" "$BASE_URL$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL$line"
     fi
   elif echo "$line" | grep -q '\.PBP$'; then
-    wget -P "../Roms/PS/" "$BASE_URL4$line"
+    wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL4$line"
   else
     if grep -q "$line" temp_files/file_list_2.txt; then
-      wget -P "../Roms/PS/" "$BASE_URL2$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_3.txt; then
-      wget -P "../Roms/PS/" "$BASE_URL3$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL3$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -199,17 +199,17 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q '\.chd$'; then
         if grep -q "$line" temp_files/file_list_5.txt; then
-          wget -P "../Roms/PS/" "$BASE_URL5$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL5$line"
         else
-          wget -P "../Roms/PS/" "$BASE_URL$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL$line"
         fi
       elif echo "$line" | grep -q '\.PBP$'; then
-        wget -P "../Roms/PS/" "$BASE_URL4$line"
+        wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL4$line"
       else
         if grep -q "$line" temp_files/file_list_2.txt; then
-          wget -P "../Roms/PS/" "$BASE_URL2$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL2$line"
         elif grep -q "$line" temp_files/file_list_3.txt; then
-          wget -P "../Roms/PS/" "$BASE_URL3$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL3$line"
         fi
       fi
       file_name=$(perform_substitution "$line")
