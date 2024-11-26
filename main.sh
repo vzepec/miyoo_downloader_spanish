@@ -16,6 +16,8 @@ GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/rele
 GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gbc_spa.sh"
 GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_snes_spa.sh"
 GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/main.sh"
+GITHUB_RELEASE_URLS_COOKIES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/cookies.txt"
+
 
 LOCAL_FILES_NES="downloaders/download_nes_spa.sh"
 LOCAL_FILES_PSX="downloaders/download_psx_spa.sh"
@@ -24,6 +26,7 @@ LOCAL_FILES_GBA="downloaders/download_gba_spa.sh"
 LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
 LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
 LOCAL_FILES_MAIN="main.sh"
+LOCAL_FILES_COOKIES="cookies.txt"
 
 
 
@@ -164,6 +167,7 @@ script() {
       check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
       check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
       check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
+      check_for_updates "$LOCAL_FILES_COOKIES" "$GITHUB_RELEASE_URLS_COOKIES"
       update_and_restart_main "$GITHUB_RELEASE_URLS_MAIN"
       ;;
     q)
