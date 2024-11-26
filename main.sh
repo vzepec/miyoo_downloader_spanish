@@ -3,6 +3,8 @@
 # Version del script
 version="v1.0.2"
 
+COOKIES_FILE="cookies.txt"
+
 # Obtiene la ultima version
 latest_version=$(wget -qO- https://api.github.com/repos/vzepec/miyoo_downloader_spanish/releases/latest | jq -r '.tag_name')
 
@@ -172,7 +174,7 @@ script() {
   if [ "$option" != "u" ]; then
     echo "Ejecutando $script..."
     chmod +x "$script"
-    "$script"
+    COOKIES_FILE="$COOKIES_FILE" "$script"
   else
     script
   fi

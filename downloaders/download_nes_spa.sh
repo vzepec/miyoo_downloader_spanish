@@ -17,16 +17,16 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(nes\|NES\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(nes\|NES\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
 
 # Descargar la lista de archivos para BASE_URL2
-wget -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
+wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
 filter_spanish "temp_files/file_list_nes_4.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_nes.txt
@@ -167,15 +167,15 @@ download_filtered_file() {
 
   if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
     if grep -q "$line" temp_files/file_list_nes_4.txt; then
-      wget -P "../Roms/FC/" "$BASE_URL4$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL4$line"
     else
-      wget -P "../Roms/FC/" "$BASE_URL$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL$line"
     fi
   else
     if grep -q "$line" temp_files/file_list_nes_2.txt; then
-      wget -P "../Roms/FC/" "$BASE_URL2$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_nes_3.txt; then
-      wget -P "../Roms/FC/" "$BASE_URL3$line"
+      wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL3$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -197,15 +197,15 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
         if grep -q "$line" temp_files/file_list_nes_4.txt; then
-          wget -P "../Roms/FC/" "$BASE_URL4$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL4$line"
         else
-          wget -P "../Roms/FC/" "$BASE_URL$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL$line"
         fi
       else
         if grep -q "$line" temp_files/file_list_nes_2.txt; then
-          wget -P "../Roms/FC/" "$BASE_URL2$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL2$line"
         elif grep -q "$line" temp_files/file_list_nes_3.txt; then
-          wget -P "../Roms/FC/" "$BASE_URL3$line"
+          wget --load-cookies="$COOKIES_FILE" -P "../Roms/FC/" "$BASE_URL3$line"
         fi
       fi
       file_name=$(perform_substitution "$line")
