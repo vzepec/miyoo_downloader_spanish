@@ -101,6 +101,14 @@ update_and_restart_main() {
   rm -f "$TEMP_FILE"
 }
 
+exist_new_version() {
+  if [ "$version" != "$latest_version" ]; then
+    echo "Actualizar a $latest_version"
+  else
+    echo "Actualizar"
+  fi
+}
+
 # Funcion para decidir qué archivo .sh ejecutar
 script() {
   clear
@@ -119,7 +127,9 @@ script() {
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
   echo ""
-  echo -e "\e[32mu. Actualizar Scripts\e[0m"
+  local update_message
+  update_message=$(exist_new_version) # Captura el mensaje de exist_new_version
+  echo -e "\e[32mu. ${update_message}\e[0m"
   echo -e "\e[32mq. Salir\e[0m"
   echo ""
   echo "------------------------------"
