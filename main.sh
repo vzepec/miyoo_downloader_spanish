@@ -181,5 +181,7 @@ script() {
   return
 }
 
+# Buscar actualizaciones para las cookies
+check_for_updates "$LOCAL_FILES_COOKIES" "$GITHUB_RELEASE_URLS_COOKIES"
 # Llamar a la funcion para decidir qué archivo .sh ejecutar
 script

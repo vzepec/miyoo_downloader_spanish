@@ -17,15 +17,16 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.\(smc\|sfc\|zip\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(smc\|sfc\|zip\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes.txt
+
 # Descargar la lista de archivos para BASE_URL2
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_2.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_2.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_3.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3"| grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_3.txt
 
 # Descargar la lista de archivos para BASE_URL4
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.sfc"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_4.txt 
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.sfc"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_snes_4.txt 
 
 filter_spanish "temp_files/file_list_snes_4.txt"
 
@@ -163,20 +164,24 @@ paginate_search_results() {
 download_filtered_file() {
   local line="$1"
   local file_name
+  local dest_dir="../Roms/SFC"
+
+  # Asegurar de que el directorio de destino exista
+  mkdir -p "$dest_dir"
 
   if echo "$line" | grep -q -E '\.smc$|\.sfc$'; then
     if grep -q "$line" temp_files/file_list_snes_4.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL4$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
     else
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
     fi
   else
     if grep -q "$line" temp_files/file_list_snes_2.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL2$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_snes_3.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL3$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
     elif echo "$line" | grep -q -E '\.zip$'; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -193,22 +198,26 @@ download_file() {
   local i=0
   local line
   local file_name
+  local dest_dir="../Roms/SFC"
+
+  # Asegurar de que el directorio de destino exista
+  mkdir -p "$dest_dir"
 
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.smc$|\.sfc$'; then
         if grep -q "$line" temp_files/file_list_snes_4.txt; then
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL4$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
         else
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
         fi
       else
           if grep -q "$line" temp_files/file_list_snes_2.txt; then
-            wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL2$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
           elif grep -q "$line" temp_files/file_list_snes_3.txt; then
-            wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL3$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
           elif echo "$line" | grep -q -E '\.zip$'; then
-            wget --load-cookies="$COOKIES_FILE" -P "../Roms/SFC/" "$BASE_URL$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/SFC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
           fi
       fi
       file_name=$(perform_substitution "$line")
