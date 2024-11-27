@@ -18,20 +18,20 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar la lista de archivos para BASE_URL
-wget --load-cookies="$COOKIES_FILE"  -q -O - "$BASE_URL" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt
 filter_spanish "temp_files/file_list.txt"
 
 # Descargar la lista de archivos para BASE_URL2
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt
 
 # Descargar la lista de archivos para BASE_URL3
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt
 
 # Descargar la lista de archivos para BASE_URL5
-wget --load-cookies="$COOKIES_FILE" -q -O - "$BASE_URL5" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_5.txt 
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL5" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_5.txt 
 filter_spanish "temp_files/file_list_5.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list.txt
@@ -164,20 +164,26 @@ paginate_search_results() {
 download_filtered_file() {
   local line="$1"
   local file_name
+  local dest_dir="../Roms/PS"
+
+  # Asegurar de que el directorio de destino exista
+  mkdir -p "$dest_dir"
 
   if echo "$line" | grep -q '\.chd$'; then
     if grep -q "$line" temp_files/file_list_5.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL5$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL5$line")" "$BASE_URL5$line"
     else
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL$line")" "$BASE_URL$line"
     fi
   elif echo "$line" | grep -q '\.PBP$'; then
-    wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL4$line"
+    curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
   else
     if grep -q "$line" temp_files/file_list_2.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL2$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+
     elif grep -q "$line" temp_files/file_list_3.txt; then
-      wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL3$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -194,35 +200,42 @@ download_file() {
   local i=0
   local line
   local file_name
+  local dest_dir="../Roms/PS"
+
+  # Asegurar de que el directorio de destino exista
+  mkdir -p "$dest_dir"
 
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q '\.chd$'; then
         if grep -q "$line" temp_files/file_list_5.txt; then
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL5$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL5$line")" "$BASE_URL5$line"
         else
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL$line")" "$BASE_URL$line"
         fi
       elif echo "$line" | grep -q '\.PBP$'; then
-        wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL4$line"
+        curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
       else
         if grep -q "$line" temp_files/file_list_2.txt; then
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL2$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
         elif grep -q "$line" temp_files/file_list_3.txt; then
-          wget --load-cookies="$COOKIES_FILE" -P "../Roms/PS/" "$BASE_URL3$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
         fi
       fi
+
       file_name=$(perform_substitution "$line")
-      mv "../Roms/PS/$line" "../Roms/PS/$file_name"
+      mv "$dest_dir/$(basename "$line")" "$dest_dir/$file_name"
+
       if echo "$line" | grep -q '\.7z$'; then
-        extract_7z "../Roms/PS/$file_name"
+        extract_7z "$dest_dir/$file_name"
       fi
-      echo "Descarga completa: ../Roms/PS/$file_name"
+      echo "Descarga completa: $dest_dir/$file_name"
       break
     fi
     i=$((i + 1))
   done < temp_files/file_list.txt
 }
+
 
 # Inicializar variables
 page=0
