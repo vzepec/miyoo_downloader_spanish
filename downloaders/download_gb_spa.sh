@@ -161,15 +161,15 @@ download_filtered_file() {
 
   if echo "$line" | grep -q -E '\.gb$|\.GB$'; then
     if grep -q "$line" temp_files/file_list_gb_4.txt; then
-        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
     else
-        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
     fi
   else
       if grep -q "$line" temp_files/file_list_gb_2.txt; then
-        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
       elif grep -q "$line" temp_files/file_list_gb_3.txt; then
-        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+        curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
       fi
   fi
     file_name=$(perform_substitution "$line")
@@ -195,15 +195,15 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.gb$|\.GB$'; then
         if grep -q "$line" temp_files/file_list_gb_4.txt; then
-            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
         else
-            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
         fi
       else
           if grep -q "$line" temp_files/file_list_gb_2.txt; then
-            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
           elif grep -q "$line" temp_files/file_list_gb_3.txt; then
-            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/GB/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
           fi
       fi
       file_name=$(perform_substitution "$line")

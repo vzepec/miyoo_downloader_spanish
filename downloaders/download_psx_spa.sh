@@ -160,18 +160,18 @@ download_filtered_file() {
 
   if echo "$line" | grep -q '\.chd$'; then
     if grep -q "$line" temp_files/file_list_5.txt; then
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL5$line")" "$BASE_URL5$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL5$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL5$line"
     else
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
     fi
   elif echo "$line" | grep -q '\.PBP$'; then
-    curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+    curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
   else
     if grep -q "$line" temp_files/file_list_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
 
     elif grep -q "$line" temp_files/file_list_3.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
 
     fi
   fi
@@ -198,17 +198,17 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q '\.chd$'; then
         if grep -q "$line" temp_files/file_list_5.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL5$line")" "$BASE_URL5$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL5$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL5$line"
         else
-          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
         fi
       elif echo "$line" | grep -q '\.PBP$'; then
-        curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+        curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
       else
         if grep -q "$line" temp_files/file_list_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
         elif grep -q "$line" temp_files/file_list_3.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
         fi
       fi
 
