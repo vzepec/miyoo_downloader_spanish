@@ -16,29 +16,20 @@ filter_spanish() {
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
 
-# Descargar la lista de archivos para BASE_URL
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(nes\|NES\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt
+# Descargar listas de archivos en paralelo
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(nes\|NES\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt & 
 
-# Descargar la lista de archivos para BASE_URL2
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_2.txt
-
-# Descargar la lista de archivos para BASE_URL3
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_3.txt
-
-# Descargar la lista de archivos para BASE_URL3
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.nes"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nes_4.txt 
+wait  # Espera a que todas las descargas de listas terminen
 filter_spanish "temp_files/file_list_nes_4.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_nes.txt
-cat temp_files/file_list_nes_2.txt >> temp_files/file_list_nes.txt
-cat temp_files/file_list_nes_3.txt >> temp_files/file_list_nes.txt
-cat temp_files/file_list_nes_4.txt >> temp_files/file_list_nes.txt
+cat temp_files/file_list_nes_2.txt temp_files/file_list_nes_3.txt temp_files/file_list_nes_4.txt >> temp_files/file_list_nes.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_nes.txt -o temp_files/file_list_nes.txt
-sort -u temp_files/file_list_nes_2.txt -o temp_files/file_list_nes_2.txt
-sort -u temp_files/file_list_nes_3.txt -o temp_files/file_list_nes_3.txt
-sort -u temp_files/file_list_nes_4.txt -o temp_files/file_list_nes_4.txt
 
 # Funcion para descomprimir archivos .zip
 # Funcion para descomprimir archivos .zip
@@ -171,16 +162,16 @@ download_filtered_file() {
 
   if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
     if grep -q "$line" temp_files/file_list_nes_4.txt; then
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
     else
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
 
     fi
   else
     if grep -q "$line" temp_files/file_list_nes_2.txt; then
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
     elif grep -q "$line" temp_files/file_list_nes_3.txt; then
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
     fi
   fi
   file_name=$(perform_substitution "$line")
@@ -206,15 +197,15 @@ download_file() {
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.nes$|\.NES$'; then
         if grep -q "$line" temp_files/file_list_nes_4.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL4$line")" "$BASE_URL4$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
         else
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL$line")" "$BASE_URL$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
         fi
       else
         if grep -q "$line" temp_files/file_list_nes_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL2$line")" "$BASE_URL2$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
         elif grep -q "$line" temp_files/file_list_nes_3.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL3$line")" "$BASE_URL3$line"
+          curl -k -L -b "$COOKIES_FILE" -o "../Roms/FC/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
         fi
       fi
       file_name=$(perform_substitution "$line")
