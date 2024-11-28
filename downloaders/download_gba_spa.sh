@@ -16,28 +16,21 @@ filter_spanish() {
 # Crear la carpeta temp_files si no existe
 mkdir -p temp_files
 
-# Descargar la lista de archivos para BASE_URL
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(gba\|GBA\|zip\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba.txt
-
-# Descargar la lista de archivos para BASE_URL2
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_2.txt
-
-# Descargar la lista de archivos para BASE_URL3
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_3.txt
-
-# Descargar la lista de archivos para BASE_URL4
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.gba"' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_4.txt 
+# Descargar listas de archivos en paralelo
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(gba\|GBA\|zip\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_2.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_3.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.gba"' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gba_4.txt & 
+wait # Espera a que todas las descargas de listas terminen
 filter_spanish "temp_files/file_list_gba_4.txt"
 
+
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_gba.txt
-cat temp_files/file_list_gba_2.txt >> temp_files/file_list_gba.txt
-cat temp_files/file_list_gba_3.txt >> temp_files/file_list_gba.txt
-cat temp_files/file_list_gba_4.txt >> temp_files/file_list_gba.txt
+cat temp_files/file_list_gba_2.txt temp_files/file_list_gba_3.txt temp_files/file_list_gba_4.txt >> temp_files/file_list_gba.txt
+
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_gba.txt -o temp_files/file_list_gba.txt
-sort -u temp_files/file_list_gba_2.txt -o temp_files/file_list_gba_2.txt
-sort -u temp_files/file_list_gba_3.txt -o temp_files/file_list_gba_3.txt
 
 # Funcion para descomprimir archivos .zip
 extract_zip() {
