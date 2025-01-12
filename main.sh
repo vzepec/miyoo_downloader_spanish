@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version del script
-version="v1.0.4"
+version="v1.0.5"
 
 COOKIES_FILE="cookies.txt"
 
@@ -15,6 +15,7 @@ GITHUB_RELEASE_URLS_GB="https://github.com/vzepec/miyoo_downloader_spanish/relea
 GITHUB_RELEASE_URLS_GBA="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gba_spa.sh"
 GITHUB_RELEASE_URLS_GBC="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_gbc_spa.sh"
 GITHUB_RELEASE_URLS_SNES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_snes_spa.sh"
+GITHUB_RELEASE_URLS_NDS="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/download_nds_spa.sh"
 GITHUB_RELEASE_URLS_MAIN="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/main.sh"
 GITHUB_RELEASE_URLS_COOKIES="https://github.com/vzepec/miyoo_downloader_spanish/releases/download/$latest_version/cookies.txt"
 
@@ -25,6 +26,7 @@ LOCAL_FILES_GB="downloaders/download_gb_spa.sh"
 LOCAL_FILES_GBA="downloaders/download_gba_spa.sh"
 LOCAL_FILES_GBC="downloaders/download_gbc_spa.sh"
 LOCAL_FILES_SNES="downloaders/download_snes_spa.sh"
+LOCAL_FILES_NDS="downloaders/download_nds_spa.sh"
 LOCAL_FILES_MAIN="main.sh"
 LOCAL_FILES_COOKIES="cookies.txt"
 
@@ -118,24 +120,23 @@ script() {
   echo "|__/|______]|___|  ||  \|__]|  ||__/|__||  \ "
   echo "                                             $version"
   echo "Seleccione Plataforma:"
-  echo "------------------------------"
-  echo ""
+  echo "----------------------------------------------------"
   echo -e "\e[32m1. NES  (Nintendo Entertainment System)\e[0m"
   echo -e "\e[32m2. PSX  (Plastation 1)\e[0m"
   echo -e "\e[32m3. GB   (Gameboy)\e[0m"
   echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
+  echo -e "\e[32m7. NDS (Nintendo DS)\e[0m"
   echo ""
   local update_message
   update_message=$(exist_new_version) # Captura el mensaje de exist_new_version
   echo -e "\e[32mu. ${update_message}\e[0m"
   echo -e "\e[32mq. Salir\e[0m"
-  echo ""
-  echo "------------------------------"
+  echo "----------------------------------------------------"
   echo ""
   local option=""
-  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ] && [ "$option" != "u" ] && [ "$option" != "q" ]; do
+  while [ "$option" != "1" ] && [ "$option" != "2" ] && [ "$option" != "3" ] && [ "$option" != "4" ] && [ "$option" != "5" ] && [ "$option" != "6" ]  && [ "$option" != "7" ] && [ "$option" != "u" ] && [ "$option" != "q" ]; do
     read -p "Opcion > " option
   done
   case "$option" in
@@ -169,6 +170,11 @@ script() {
       [ ! -f "$LOCAL_FILES_SNES" ] && check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
       script="$LOCAL_FILES_SNES"
       ;;
+    7)
+      clear
+      [ ! -f "$LOCAL_FILES_NDS" ] && check_for_updates "$LOCAL_FILES_NDS" "$GITHUB_RELEASE_URLS_NDS"
+      script="$LOCAL_FILES_NDS"
+      ;;
     u)
       clear
       check_for_updates "$LOCAL_FILES_SNES" "$GITHUB_RELEASE_URLS_SNES"
@@ -177,6 +183,7 @@ script() {
       check_for_updates "$LOCAL_FILES_GB" "$GITHUB_RELEASE_URLS_GB"
       check_for_updates "$LOCAL_FILES_PSX" "$GITHUB_RELEASE_URLS_PSX"
       check_for_updates "$LOCAL_FILES_NES" "$GITHUB_RELEASE_URLS_NES"
+      check_for_updates "$LOCAL_FILES_NDS" "$GITHUB_RELEASE_URLS_NDS"
       check_for_updates "$LOCAL_FILES_COOKIES" "$GITHUB_RELEASE_URLS_COOKIES"
       update_and_restart_main "$GITHUB_RELEASE_URLS_MAIN"
       ;;
