@@ -127,7 +127,7 @@ script() {
   echo -e "\e[32m4. GBA  (Gameboy Advance)\e[0m"
   echo -e "\e[32m5. GBC  (Gameboy Color)\e[0m"
   echo -e "\e[32m6. SNES (Super Nintendo)\e[0m"
-  echo -e "\e[32m7. NDS (Nintendo DS)\e[0m"
+  echo -e "\e[32m7. NDS  (Nintendo DS)\e[0m"
   echo ""
   local update_message
   update_message=$(exist_new_version) # Captura el mensaje de exist_new_version
