@@ -43,6 +43,7 @@ Actualmente soporta las siguientes plataformas:
 - GBA
 - GBC
 - SNES
+- NDS
 
 Ademas, el archivo main.sh, dispone de una opcion para buscar actualizaciones de los scripts manualmente.
 
