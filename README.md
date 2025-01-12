@@ -15,7 +15,7 @@ Los scripts descargadores muestan una lista paginada de roms disponibles, te per
 
 # Instalación y Ejecución 
 
-* Descarga el archivo [main.sh](https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.4/main.sh).
+* Descarga el archivo [main.sh](https://github.com/vzepec/miyoo_downloader_spanish/releases/download/v1.0.5/main.sh).
 * Conecta la micro SD de tu Miyoo a tu PC.
 * Crea una carpeta en la micro SD llamada `scripts` y deja el archivo `main.sh` dentro.
 * Conecta la tarjeta micro SD a la Miyoo y abre la aplicación Terminal .
