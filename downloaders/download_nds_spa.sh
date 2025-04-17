@@ -1,8 +1,10 @@
 #!/bin/sh
 
 # URL base
-BASE_URL="https://archive.org/download/NDS-Arquivista/"
-
+BASE_URL="https://archive.org/download/infinte-space/"
+BASE_URL2="https://archive.org/download/el-profesor-layton-y-la-llamada-del-espectro-nds-roms-nintendo-en-espanol/"
+BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-nds/"
+BASE_URL4="https://archive.org/download/nds_20220403/"
 
 # Funcion para filtrar archivos por idioma español (opcional)
 filter_spanish() {
@@ -15,13 +17,30 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar listas de archivos en paralelo
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(nds\|NDS\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nds.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(nds\|NDS\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nds_1.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.\(nds\|NDS\)"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nds_2.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nds_3.txt &
+curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_nds_4.txt &
+
 
 wait  # Espera a que todas las descargas de listas terminen
-filter_spanish "temp_files/file_list_nds.txt"
+#filter_spanish "temp_files/file_list_nds.txt"
+
+# Reordenar los nombres alfabéticamente y eliminar duplicados
+sort -u temp_files/file_list_nds_1.txt -o temp_files/file_list_nds_1.txt
+sort -u temp_files/file_list_nds_2.txt -o temp_files/file_list_nds_2.txt
+sort -u temp_files/file_list_nds_3.txt -o temp_files/file_list_nds_3.txt
+sort -u temp_files/file_list_nds_4.txt -o temp_files/file_list_nds_4.txt
+
+# Agregar archivos de BASE_URL2 a temp_files/file_list_nds.txt
+cat temp_files/file_list_nds_1.txt > temp_files/file_list_nds.txt
+cat temp_files/file_list_nds_2.txt >> temp_files/file_list_nds.txt
+cat temp_files/file_list_nds_3.txt >> temp_files/file_list_nds.txt
+cat temp_files/file_list_nds_4.txt >> temp_files/file_list_nds.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_nds.txt -o temp_files/file_list_nds.txt
+
 
 # Funcion para descomprimir archivos .zip
 extract_zip() {
@@ -38,7 +57,7 @@ extract_zip() {
 
 # Funcion para realizar la sustitucion
 perform_substitution() {
-  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/i/g' -e 's/%C3%B3/o/g' -e 's/%C3%A9/e/g'
+  echo "$1" | sed -e 's/%20/ /g' -e 's/%28/(/g' -e 's/%29/)/g' -e 's/%2C/,/g' -e 's/%26/\&/g' -e 's/%27/'"'"'/g' -e 's/%21/!/g' -e 's/%25/%/g' -e 's/%5B/[/g' -e 's/%5D/]/g' -e 's/%2B/+/g' -e 's/%C3%AD/i/g' -e 's/%C3%B3/o/g' -e 's/%C3%A9/e/g' -e 's/%C3%B1/n/g'
 }
 
 # Funcion para mostrar una pagina de archivos
@@ -152,9 +171,20 @@ download_filtered_file() {
   mkdir -p "$dest_dir"
 
   if echo "$line" | grep -q -E '\.nds$|\.NDS$'; then
-    if grep -q "$line" temp_files/file_list_nds.txt; then
+    if grep -q "$line" temp_files/file_list_nds_1.txt; then
       curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
     fi
+    if grep -q "$line" temp_files/file_list_nds_2.txt; then
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
+    fi
+  fi
+  if echo "$line" | grep -q '\.zip$'; then
+        if grep -q "$line" temp_files/file_list_nds_3.txt; then
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
+        fi
+        if grep -q "$line" temp_files/file_list_nds_4.txt; then
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
+        fi
   fi
   file_name=$(perform_substitution "$line")
   mv "../Roms/NDS/$line" "../Roms/NDS/$file_name"
@@ -178,8 +208,19 @@ download_file() {
   while IFS= read -r line && [ $i -le $index ]; do
     if [ $i -eq $index ]; then
       if echo "$line" | grep -q -E '\.nds$|\.NDS$'; then
-        if grep -q "$line" temp_files/file_list_nds.txt; then
+        if grep -q "$line" temp_files/file_list_nds_1.txt; then
             curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
+        fi
+        if grep -q "$line" temp_files/file_list_nds_2.txt; then
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
+        fi
+      fi
+      if echo "$line" | grep -q '\.zip$'; then
+        if grep -q "$line" temp_files/file_list_nds_3.txt; then
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
+        fi
+        if grep -q "$line" temp_files/file_list_nds_4.txt; then
+            curl -k -L -b "$COOKIES_FILE" -o "../Roms/NDS/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
         fi
       fi
       file_name=$(perform_substitution "$line")
