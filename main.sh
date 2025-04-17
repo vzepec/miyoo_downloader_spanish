@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version del script
-version="v1.0.5"
+version="v1.0.6"
 
 COOKIES_FILE="cookies.txt"
 
