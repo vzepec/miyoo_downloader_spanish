@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # URL base
-BASE_URL="https://archive.org/download/tomb-raider-gbc-roms-nintendo-en-espanol/"
-BASE_URL2="https://archive.org/download/gbc-compilacion-de-traducciones-en-espanol_202404/"
+#BASE_URL="https://archive.org/download/tomb-raider-gbc-roms-nintendo-en-espanol/"
+#BASE_URL2="https://archive.org/download/gbc-compilacion-de-traducciones-en-espanol_202404/"
 BASE_URL3="https://archive.org/download/compilacion-traducciones-castellano-gbc/"
 BASE_URL4="https://archive.org/download/CentralArquivista-GameBoyColor/"
 
@@ -17,8 +17,6 @@ filter_spanish() {
 mkdir -p temp_files
 
 # Descargar listas de archivos en paralelo
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^\"]*\.\(gbc\|GBC\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gbc.txt &
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gbc_2.txt &
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.zip"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gbc_3.txt &
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.\(gbc\|GBC\)"'  | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_gbc_4.txt &
 wait # Espera a que todas las descargas de listas terminen
@@ -26,7 +24,7 @@ wait # Espera a que todas las descargas de listas terminen
 filter_spanish "temp_files/file_list_gbc_4.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list_gbc.txt
-cat temp_files/file_list_gbc_2.txt temp_files/file_list_gbc_3.txt temp_files/file_list_gbc_4.txt >> temp_files/file_list_gbc.txt
+cat temp_files/file_list_gbc_3.txt temp_files/file_list_gbc_4.txt >> temp_files/file_list_gbc.txt
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
 sort -u temp_files/file_list_gbc.txt -o temp_files/file_list_gbc.txt
@@ -162,13 +160,9 @@ download_filtered_file() {
   if echo "$line" | grep -q -E '\.gbc$|\.GBC$'; then
     if grep -q "$line" temp_files/file_list_gbc_4.txt; then
       curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
-    else
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
     fi
   else
-    if grep -q "$line" temp_files/file_list_gbc_2.txt; then
-      curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
-    elif grep -q "$line" temp_files/file_list_gbc_3.txt; then
+    if grep -q "$line" temp_files/file_list_gbc_3.txt; then
       curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
     fi
   fi
@@ -196,13 +190,9 @@ download_file() {
       if echo "$line" | grep -q -E '\.gbc$|\.GBC$'; then
         if grep -q "$line" temp_files/file_list_gbc_4.txt; then
           curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
-        else
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL$line"
         fi
       else
-        if grep -q "$line" temp_files/file_list_gbc_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_gbc_3.txt; then
+        if grep -q "$line" temp_files/file_list_gbc_3.txt; then
           curl -k -L -b "$COOKIES_FILE" -o "../Roms/GBC/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
         fi
       fi

@@ -2,7 +2,7 @@
 
 # URL base
 BASE_URL="https://archive.org/download/chd_psx_eur/CHD-PSX-EUR/"
-BASE_URL2="https://archive.org/download/psx-compilacion-de-traducciones-en-espanol_202305/"
+#BASE_URL2="https://archive.org/download/psx-compilacion-de-traducciones-en-espanol_202305/"
 BASE_URL3="https://archive.org/download/compilacion-traducciones-en-castellano-psx/"
 BASE_URL4="https://archive.org/download/valkyrie-profile/"
 BASE_URL5="https://archive.org/download/PS1_EU_CHD_Arquivista/"
@@ -19,7 +19,6 @@ mkdir -p temp_files
 
 # Descargar listas de archivos en paralelo
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL" | grep -o 'href="[^"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list.txt &
-curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL2" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_2.txt &
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL3" | grep -o 'href="[^\"]*\.7z"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_3.txt &
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL4" | grep -o 'href="[^\"]*\.PBP"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_4.txt &
 curl -k -L -b "$COOKIES_FILE" -s "$BASE_URL5" | grep -o 'href="[^\"]*\.chd"' | sed 's/ /%20/g' | sed 's/href="//' | sed 's/"//' > temp_files/file_list_5.txt &
@@ -29,7 +28,7 @@ filter_spanish "temp_files/file_list.txt"
 filter_spanish "temp_files/file_list_5.txt"
 
 # Agregar archivos de BASE_URL2 y BASE_URL3 a temp_files/file_list.txt
-cat temp_files/file_list_2.txt temp_files/file_list_3.txt temp_files/file_list_4.txt temp_files/file_list_5.txt >> temp_files/file_list.txt
+cat temp_files/file_list_3.txt temp_files/file_list_4.txt temp_files/file_list_5.txt >> temp_files/file_list.txt
 
 
 # Reordenar los nombres alfabéticamente y eliminar duplicados
@@ -167,8 +166,8 @@ download_filtered_file() {
   elif echo "$line" | grep -q '\.PBP$'; then
     curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
   else
-    if grep -q "$line" temp_files/file_list_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
+    if grep -q "$line" temp_files/file_list_3.txt; then
+      curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
 
     elif grep -q "$line" temp_files/file_list_3.txt; then
           curl -k -L -b "$COOKIES_FILE" -o "../Roms/PS/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
@@ -205,9 +204,7 @@ download_file() {
       elif echo "$line" | grep -q '\.PBP$'; then
         curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL4$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL4$line"
       else
-        if grep -q "$line" temp_files/file_list_2.txt; then
-          curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL2$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL2$line"
-        elif grep -q "$line" temp_files/file_list_3.txt; then
+        if grep -q "$line" temp_files/file_list_3.txt; then
           curl -k -L -b "$COOKIES_FILE" -o "$dest_dir/$(basename "$BASE_URL3$line")" --speed-time 100 --speed-limit 10000 --retry 3 --retry-delay 5 "$BASE_URL3$line"
         fi
       fi
